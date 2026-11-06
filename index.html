@@ -96,7 +96,7 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
 .map.shake,.note.shake{animation:shake .45s}
 
 .note{
-  grid-column:3;position:relative;min-width:0;box-sizing:border-box;max-height:100%;
+  grid-column:3;position:relative;min-width:0;box-sizing:border-box;max-height:calc(100% - 14px);
   font-size:calc(var(--k,1) * 1rem);
   background:#fff;padding:1.1em 1.4em 1.2em;
   box-shadow:4px 5px 0 rgba(29,63,158,.10),0 1px 3px rgba(0,0,0,.10);
@@ -119,7 +119,7 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
 .ribbon .em{width:2.3em;height:2.3em;flex:none}
 .ribbon .txt{display:flex;flex-direction:column;min-width:0;flex:1}
 .ribbon small{font-weight:700;font-size:.78em;letter-spacing:.09em;text-transform:uppercase}
-.ribbon .nm{font-family:var(--f-marker);font-size:1.95em;white-space:nowrap;overflow:hidden;line-height:1.1}
+.ribbon .nm{font-family:var(--f-marker);font-size:2.15em;white-space:nowrap;overflow:hidden;line-height:1.1}
 .ribbon.flip{animation:flip .5s cubic-bezier(.3,1.6,.5,1)}
 @keyframes flip{from{transform:scaleY(.2) rotate(-2deg);opacity:.2}}
 
@@ -133,7 +133,7 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
 .dots i.g{border-color:var(--goldT);border-width:3px}
 .dots i.duel{border-radius:3px;transform:rotate(45deg)}
 .scene{font-size:1.12em;line-height:1.35;margin:0;text-wrap:pretty}
-.answered .scene,.answered #fusebox,.answered .ribbon,.answered .twist{display:none}
+.stealing .scene,.answered .scene,.answered #fusebox,.answered .ribbon,.answered .twist{display:none}
 .ask{font-weight:700;font-size:1.5em;line-height:1.18;margin:0;text-wrap:balance}
 .hl{background:linear-gradient(100deg,transparent 2%,var(--hl) 4%,var(--hl) 94%,transparent 97%);padding:0 .15em;box-decoration-break:clone;-webkit-box-decoration-break:clone}
 .big{font-family:var(--f-marker);font-weight:400}
@@ -279,13 +279,13 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
 
 /* diploma: lo que recorrieron */
 .diploma{position:relative;border:3px solid var(--pencil);outline:2px solid var(--pencil);outline-offset:5px;border-radius:6px 14px 8px 12px;padding:.8em 1em;display:flex;flex-direction:column;gap:.55em}
-.diploma h2{font-family:var(--f-marker);font-weight:400;font-size:2em;margin:0;line-height:1.05;padding-right:4.5em}
+.diploma h2{font-family:var(--f-marker);font-weight:400;font-size:1.7em;margin:0;line-height:1.1;padding-right:4.2em}
 .diploma .lead{font-size:1.1em}
 .ideas{display:grid;grid-template-columns:1fr 1fr;gap:.55em}
 .idea{border:3px solid var(--pencil);border-radius:14px 22px 12px 18px;padding:.45em .6em;opacity:0;transform:translateY(10px) rotate(-1deg);transition:opacity .5s,transform .5s cubic-bezier(.3,1.5,.5,1);background:#fff;display:flex;flex-direction:column;gap:.15em}
 .idea.on{opacity:1;transform:none}
 .idea b{font-family:var(--f-marker);font-weight:400;font-size:1.12em;line-height:1.1}
-.idea span{font-size:.95em;line-height:1.25}
+.idea span{font-size:1em;line-height:1.22}
 .idea i{font-style:normal;font-size:.78em;font-weight:700;color:var(--soft)}
 .idea.c1{background:#fff8d6} .idea.c2{background:var(--blueL)} .idea.c3{background:#e5f7ea} .idea.c4{background:var(--redL)}
 .stamp{position:absolute;right:.6em;top:.3em;border:4px double var(--red);color:var(--red);font-family:var(--f-marker);font-size:1.1em;padding:.4em .6em;border-radius:50%;background:rgba(255,255,255,.85);transform:rotate(-14deg);animation:stamp .5s .4s cubic-bezier(.3,1.6,.5,1) both}
@@ -902,8 +902,9 @@ function burn(){
   const r = () => 35 + Math.floor(Math.random()*30);
   b.style.cssText = 'width:'+sz+'px;height:'+(sz*(.7+Math.random()*.5))+'px;left:'+Math.max(0,Math.min(innerWidth-sz,cx-sz/2))+'px;top:'+Math.max(0,Math.min(innerHeight-sz,cy-sz/2))+'px;border-radius:'+r()+'% '+r()+'% '+r()+'% '+r()+'% / '+r()+'% '+r()+'% '+r()+'% '+r()+'%;transform:rotate('+Math.floor(Math.random()*360)+'deg)';
   $('burns').appendChild(b);
+  while($('burns').children.length > 6) $('burns').firstChild.remove();
 }
-function syncBurns(){ const bs = $('burns'); while(bs.children.length > state.shorts) bs.lastChild.remove(); while(bs.children.length < state.shorts){ const n = bs.children.length; const keep = state.shorts; state.shorts = n+1; burn(); state.shorts = keep; } }
+function syncBurns(){ const bs = $('burns'), want = Math.min(6, state.shorts); while(bs.children.length > want) bs.lastChild.remove(); while(bs.children.length < want){ const n = bs.children.length; const keep = state.shorts; state.shorts = n+1; burn(); state.shorts = keep; } }
 function toast(msg){ const t = document.createElement('div'); t.className='toast'; t.textContent = msg; document.body.appendChild(t); setTimeout(()=>t.remove(), 2500); }
 
 /* ===== ajuste al tamaño de la pantalla ===== */
@@ -916,7 +917,7 @@ function fitText(el){
 function fitAll(){ document.querySelectorAll('.fit').forEach(fitText); }
 function fitNote(){
   if(innerWidth <= 760){ note.style.removeProperty('--k'); fitAll(); return; }
-  const max = $('stage').clientHeight;
+  const max = $('stage').clientHeight - 14;
   let k = 1; note.style.setProperty('--k', 1); fitAll();
   while(note.scrollHeight > max + 1 && k > .62){ k -= .04; note.style.setProperty('--k', k.toFixed(2)); }
   if(k < 1) fitAll();
@@ -1062,7 +1063,7 @@ function setNote(html, cls){
   fitNote(); refit();
 }
 /* Une un botón y la tecla Enter a la misma acción, que solo puede ocurrir una vez (anti doble clic y doble Enter) */
-function act(fn){ let used = false; return function(...a){ if(used || performance.now()-screenAt < 350 || paused) return; used = true; afterKey = null; fn(...a); }; }
+function act(fn, now){ let used = false; return function(...a){ if(used || (!now && performance.now()-screenAt < 350) || paused) return; used = true; afterKey = null; fn(...a); }; }
 function bindNext(id, fn){ const f = act(fn); const b = $(id); if(b) b.onclick = f; afterKey = f; return f; }
 function dots(i){
   return '<span class="dots" aria-label="Parada '+(Math.min(i,STATIONS.length-1)+1)+' de '+STATIONS.length+'">' +
@@ -1163,7 +1164,7 @@ async function countdown(){
       '<button class="pick R" id="pk1" type="button"><span class="k">2</span><span class="t">'+nm(1)+' →</span></button>' +
       '<button class="pick N" id="pk2" type="button"><span class="k">3</span><span class="t">Empate: un punto para cada uno</span></button>' +
     '</div>');
-  const f = act(k => cryWin(k));
+  const f = act(k => cryWin(k), true);
   [0,1,2].forEach(k => { $('pk'+k).onclick = () => f(k); });
   cry.pick = f;
 }
@@ -1238,7 +1239,7 @@ function switchTurn(){
   state.turn = 1 - state.turn; state.stealing = true;
   band(state.turn);
   const old = $('ribbon'); old.outerHTML = ribbonHTML(state.turn, true);
-  const rb = $('ribbon'); rb.classList.add('flip');
+  const rb = $('ribbon'); rb.classList.add('flip'); note.classList.add('stealing');
   drawScore(); fitAll();
 }
 async function choose(k){
@@ -1278,7 +1279,7 @@ async function choose(k){
       startFuse(secs().robo);
     } else {
       stopFuse();
-      fb.innerHTML = '<span class="tag">'+CROSS+'¡Doble cortocircuito!</span><span class="why">'+o.msg+'</span>';
+      fb.innerHTML = '<span class="tag">'+CROSS+'¡Doble cortocircuito!</span>';
       await nobody(fb);
     }
   }
@@ -1394,8 +1395,8 @@ async function duelEnd(winner, early, t, culprit){
   let head, body;
   if(early){
     sfx('bzzt'); veil('red'); shake(); state.shorts++; burn();
-    head = '¡Cortocircuito de '+nm(culprit)+'!';
-    body = 'Apretó '+(st==='decoy'?'con una trampa':'antes de tiempo')+'. El duelo es para '+nm(winner)+'.';
+    head = '¡'+nm(culprit)+' se adelantó!';
+    body = (st==='decoy' ? 'Apretó con una trampa.' : 'Apretó antes del rayo.')+' El duelo es para <b style="color:'+TEAMS[winner].c+'">'+nm(winner)+'</b>.';
   } else {
     state.react = t;
     head = '¡'+nm(winner)+' en <span class="n">'+t.toFixed(2).replace('.',',')+'</span> segundos!';
@@ -1403,7 +1404,7 @@ async function duelEnd(winner, early, t, culprit){
   }
   setNote(
     '<div class="eyebrow"><span>Resultado del duelo</span></div>' +
-    '<p class="shout" style="color:'+TEAMS[winner].c+'">'+head+'</p>' +
+    '<p class="shout" style="color:'+TEAMS[early ? culprit : winner].c+'">'+head+'</p>' +
     '<p class="scene" style="display:block">'+body+'</p>' +
     (early ? '' :
     '<ul class="chain" id="chain">' +
@@ -1426,7 +1427,7 @@ async function duelEnd(winner, early, t, culprit){
 async function champions(){
   const [a,b] = state.score;
   if(a===b){ state.tiebreak = true; state.duelDone = false; return duelIntro(); }
-  screen('champ'); band(); drawScore(); clearProgress();
+  screen('champ'); band(); drawScore(); clearProgress(); $('burns').innerHTML = '';
   music(null); duck(1,.1);
   sfx('drum',1.6);
   setNote('<p class="wait" style="color:var(--pencil)">Y los campeones del sistema nervioso son…</p>');
@@ -1466,12 +1467,11 @@ async function diploma(){
   setNote(
     '<div class="diploma">' +
       '<span class="stamp">APROBADO</span>' +
-      '<h2>Diploma de Impulso Nervioso</h2>' +
-      '<p class="lead">Esta sala recorrió el sistema nervioso:</p>' +
+      '<div class="eyebrow"><span>Diploma de Impulso Nervioso</span></div>' +
+      '<h2>Esta sala recorrió el sistema nervioso</h2>' +
       '<div class="ideas">' + IDEAS.map((d,k)=>'<div class="idea '+d.c+'" id="id'+k+'"><b>'+d.h+'</b><span>'+d.t+'</span><i>('+d.m+')</i></div>').join('') + '</div>' +
-      '<div class="row"><span class="hint" style="font-size:.85em">Campeones: <b style="color:'+TEAMS[w].c+'">'+nm(w)+'</b> · '+Math.max(a,b)+' a '+Math.min(a,b)+'</span><span class="photo">¡Sáquenle una foto!</span></div>' +
-    '</div>' +
-    '<div class="row"><span></span><button class="go" id="last" type="button">Una última señal <kbd>Enter</kbd></button></div>');
+      '<div class="row"><span class="photo">¡Sáquenle una foto!</span><span class="hint" style="font-size:.85em">Campeones: <b style="color:'+TEAMS[w].c+'">'+nm(w)+'</b> · '+Math.max(a,b)+' a '+Math.min(a,b)+'</span><button class="go" id="last" type="button" style="margin-left:0">Una última señal <kbd>Enter</kbd></button></div>' +
+    '</div>');
   setHeart('slow'); face('happy');
   bindNext('last', farewell);
   for(let k=0;k<IDEAS.length;k++){ await wait(k===0?600:900); const el = $('id'+k); if(!el) return; el.classList.add('on'); tone(523+k*130,0,.25,'triangle',.08); }

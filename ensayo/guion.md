@@ -39,7 +39,7 @@ Regla para todos: hablar despacio, mirando a los padres, no a la pantalla.
 | 1:20 | Reglas | Valentino | Una sola pantalla: "Responde el equipo marcado. 15 segundos. Si fallan, roba el otro. Las dos últimas valen doble." | Escuchan. | "Es fácil". |
 | 1:40 | Paradas 1 a 4 | Lee cada uno (ver `guia.html`) | Lee la escena y la pregunta. Mateo aprieta Enter: se prende la mecha. El Cerebro del equipo responde en voz alta y Mateo aprieta 1, 2 o 3. | Discuten en voz baja, el Cerebro grita la respuesta. | Tensión corta, alivio, festejo. |
 | 4:00 | Parada 5 (dorada) — el perro | Mateo ladra, todos | "¡GUAU!" Después de responder: **"¡Todos de pie!"** | **Se paran.** | Pico de energía. |
-| 4:35 | Parada 6 (dorada) — Toby | Felipe | "Ya se pueden sentar. Respiren con la pelotita." | Respiran juntos. | Calma, risa, complicidad. |
+| 4:35 | Parada 6 (dorada) — Toby | Todos juntos (arranca Felipe) | "Ya se pueden sentar." Leen la escena a coro. Después: "Respiren con la pelotita." | Respiran juntos. | Calma, risa, complicidad. |
 | 5:10 | Duelo de Cerebros | Franco y Facundo | Los dos Cerebros pasan al teclado: A y L. "Cuando aparezca el rayo… ¡ojo con las trampas!" | Gritan, alientan. | Suspenso máximo. |
 | 5:40 | Campeones | Todos los chicos | "**¡Un aplauso para los dos equipos!**" | **Aplauden.** | Pico (el que gana festeja; el que pierde aplaude). |
 | 6:00 | Diploma: lo que recorrieron | Valentino | Lee las 4 ideas: "Esto es lo que recorrieron hoy." "¡Sáquenle una foto!" | Sacan fotos. | Orgullo: aprendieron algo. |
