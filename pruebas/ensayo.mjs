@@ -203,38 +203,23 @@ async function station(H, i, plan, {shoot=true, pauses=null}={}){
   if(P.after) await H.sleep(P.after);
   await H.enter();
 }
-/* Duelo a mano alzada: el que maneja marca con 1 (izquierda) o 2 (derecha) qué Cerebro levantó primero; 3 repite el rayo. */
-const ASK_FIRST = '#note .ask:has-text("primero")';
-async function rayo(H, team, {shoot=false}={}){
-  await H.waitSel(ASK_FIRST, 30000); if(shoot) await H.shot('duelo-quien');
-  await H.key(String(team+1)); await H.waitPhase('duel-round');
-}
+/* Pregunta final para los dos equipos: ordenar el recorrido. El que maneja marca con 1 / 2 quién acertó.
+   how: 'A' acierta el de la izquierda · 'L' el de la derecha · 'trap' los dos · 'none' ninguno · 'early' se vence la mecha */
 async function duel(H, how, {shoot=true}={}){
-  await H.waitPhase('duel-intro'); if(shoot) await H.shot('duelo');
-  await H.enter(); await H.waitPhase('duel');
-  const need = (await H.st()).tiebreak ? 1 : 2;
-  let win = 0;
-  if(how==='early'){ await H.sleep(500); await H.key('1'); await H.waitPhase('duel-round'); if(shoot) await H.shot('duelo-adelantado'); win = 1; }
-  else if(how==='trap'){
-    const seen = await Promise.race([
-      H.waitSel('.flash:not(.real):not([hidden]) p', 30000).then(()=>'trampa').catch(()=>null),
-      H.waitSel(ASK_FIRST, 30000).then(()=>'pregunta').catch(()=>null)]);
-    if(seen==='trampa'){ if(shoot) await H.shot('duelo-trampa'); await H.key('2'); await H.waitPhase('duel-round'); }
-    else { await H.key('1'); await H.waitPhase('duel-round'); }
-    win = 0;
-  }
-  else if(how==='none'){ await H.waitSel(ASK_FIRST, 30000); if(shoot) await H.shot('duelo-pregunta'); await H.key('3'); await H.sleep(300); await rayo(H, 0); win = 0; }
-  else { win = how==='A' ? 0 : 1; await rayo(H, win, {shoot}); }
-  for(let r=1; r<need; r++){ await H.enter(); await H.waitPhase('duel'); await rayo(H, win); }
-  if(shoot) await H.shot('duelo-ronda');
+  await H.waitPhase('duel-intro'); if(shoot) await H.shot('pregunta-final');
+  await H.enter(); await H.waitPhase('duel'); if(shoot) await H.shot('pregunta-final-cartas');
+  if(how==='early'){ await H.waitPhase('duel-judge', 60000); }
+  else { await H.sleep(800); await H.enter(); await H.waitPhase('duel-judge'); }
+  const marks = how==='A' ? ['1'] : how==='L' ? ['2'] : how==='trap' ? ['1','2'] : how==='early' ? ['2'] : [];
+  for(const k of marks) await H.key(k);
+  if(shoot) await H.shot('pregunta-final-quien');
   await H.enter(); await H.waitPhase('duel-done');
-  await H.waitSel('#endrow:not([hidden])', 15000); if(shoot) await H.shot('duelo-resultado');
+  await H.waitSel('#endrow:not([hidden])', 15000); if(shoot) await H.shot('pregunta-final-respuesta');
 }
 async function ending(H, {shoot=true, pauses=null}={}){
   const P = pauses || {};
   await H.enter();
-  const ph = await H.waitPhase(['champ','duel-intro'], 10000);
-  if(ph==='duel-intro'){ if(shoot) await H.shot('desempate'); await duel(H, 'L', {shoot}); await H.enter(); await H.waitPhase('champ', 10000); }
+  await H.waitPhase('champ', 10000);
   await H.sleep(2600); if(shoot) await H.shot('campeones');
   if(P.champ) await H.sleep(P.champ);
   await H.enter(); await H.waitPhase('diploma'); await H.sleep(4200); if(shoot) await H.shot('diploma');
@@ -318,8 +303,8 @@ const SCENARIOS = [
     // reiniciar: pide confirmación; con Esc no pasa nada
     await H.key('r'); await H.shot('reiniciar-pregunta'); await H.key('Escape');
     if(await H.phase()!=='read') throw new Error('R reinició sin confirmar');
-    // música y efectos
-    await H.key('m'); await H.key('m'); await H.key('-'); await H.key('+');
+    // efectos de sonido
+    await H.key('s'); await H.key('s'); // efectos de sonido no / sí (ya no hay música)
     for(let i=1;i<6;i++) await station(H, i, 'ok', {shoot:false});
     await duel(H, 'A', {shoot:false});
   }},
@@ -372,15 +357,9 @@ SCENARIOS.push({name:'tactil', desc:'Todo con toques, sin teclado', run: async H
     await H.sleep(400); await tap('#next');
   }
   await H.waitPhase('duel-intro'); await H.shot('duelo'); await tap('#ready', 300);
-  // el que maneja arbitra tocando: un rayo con la mitad del cartel, el otro con el botón del nombre
-  await H.waitPhase('duel'); await p.waitForSelector('.flash.real:not([hidden])', {timeout:20000}); await H.sleep(250);
-  await p.touchscreen.tap(Math.round(H.page.viewportSize().width*0.8), 300);
-  await H.waitPhase('duel-round'); await H.sleep(450); await tap('#next'); await H.waitPhase('duel');
-  await H.waitSel(ASK_FIRST, 30000); await tap('#j1');
-  await H.waitPhase('duel-round'); await H.sleep(450); await tap('#next');
-  await H.waitPhase('duel-done'); await H.waitSel('#endrow:not([hidden])', 15000); await H.shot('duelo-resultado');
-  await tap('#end'); await H.waitPhase(['champ','duel-intro'], 10000);
-  if(await H.phase()==='duel-intro'){ await tap('#ready', 300); await H.waitSel(ASK_FIRST, 30000); await tap('#j0'); await H.waitPhase('duel-round'); await H.sleep(450); await tap('#next'); await H.waitSel('#endrow:not([hidden])', 15000); await tap('#end'); }
+  await H.waitPhase('duel'); await tap('#ready', 600); await H.waitPhase('duel-judge');
+  await tap('#j1', 300); await H.shot('pregunta-final-tactil'); await tap('#ready', 600);
+  await H.waitPhase('duel-done'); await H.waitSel('#endrow:not([hidden])', 15000); await H.shot('pregunta-final-respuesta'); await tap('#end');
   await H.waitPhase('champ'); await H.sleep(2600); await H.shot('campeones');
   await tap('#dip'); await H.waitPhase('diploma'); await H.sleep(4200); await H.shot('diploma');
   await tap('#last'); await H.waitPhase('bye'); await H.sleep(13000); await H.shot('cierre');

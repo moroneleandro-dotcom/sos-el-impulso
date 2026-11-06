@@ -251,13 +251,26 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
 .line .nm{font-family:var(--f-marker);font-size:1.5em;line-height:1.05;white-space:nowrap;overflow:hidden;max-width:100%}
 .line small{font-weight:700;font-size:.9em;color:var(--pencil)}
 .lineup .vsbig{font-family:var(--f-marker);font-size:2.6em;color:var(--pencil);transform:rotate(-8deg)}
-/* duelo: el que maneja marca qué Cerebro levantó la mano primero */
+/* pregunta final: tarjetas, recorrido y marcas de quién acertó */
 .duel-score{display:flex;justify-content:center;align-items:center;gap:.8em;font-family:var(--f-marker);font-size:1.3em}
 .duel-score .L{color:var(--red)} .duel-score .R{color:var(--blue)}
 .rays{display:inline-flex;gap:.25em}
 .rays i{width:.8em;height:.8em;border-radius:50%;border:2.5px solid currentColor;display:inline-block}
 .rays i.on{background:currentColor}
 .judge{display:grid;grid-template-columns:1fr 1fr;gap:.6em}
+.cards{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:.45em}
+.card-o{display:flex;flex-direction:column;align-items:center;gap:.2em;border:3px solid var(--pencil);border-radius:12px 18px 10px 16px;background:#fff;padding:.45em .3em;text-align:center;font-weight:700;line-height:1.15;min-width:0}
+.card-o b{font-family:var(--f-marker);font-weight:400;font-size:1.6em;line-height:1;color:var(--pencil)}
+.card-o span{font-size:.85em}
+.judge .pick{flex-wrap:wrap}
+.pick .mark{margin-left:auto;font-family:var(--f-body);font-size:.6em;font-weight:700;opacity:.75}
+.pick.yes{background:var(--hl2,#c8f0d2);border-width:4px}
+.pick.yes .mark{opacity:1}
+.route{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;align-items:center;gap:.35em}
+.route li{display:flex;align-items:center;gap:.35em;font-weight:700;font-size:1.1em;opacity:0;transform:translateY(8px);transition:opacity .35s,transform .35s}
+.route li.on{opacity:1;transform:none}
+.route li b{font-family:var(--f-marker);font-weight:400;font-size:1.3em;color:var(--blue)}
+.route li:not(:last-child)::after{content:"→";color:var(--soft);margin-left:.35em}
 .judge .pick{justify-content:center}
 .judge .pick.N{grid-column:1/-1;font-size:.9em}
 .brainy{display:flex;align-items:center;gap:.6em;font-size:1.05em;margin:0}
@@ -449,7 +462,7 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
     <div class="board" id="board" hidden aria-live="polite"></div>
     <div class="tools">
       <span class="tag-ensayo" id="tagEnsayo" hidden>MODO ENSAYO</span>
-      <button class="tool" id="bMus" type="button" title="Música (tecla M)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18 V5 l11 -2 v13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6.5" cy="18" r="3" fill="currentColor"/><circle cx="17.5" cy="16" r="3" fill="currentColor"/></svg><span>música</span></button>
+      <button class="tool" id="bMus" type="button" hidden title="Música (tecla M)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18 V5 l11 -2 v13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6.5" cy="18" r="3" fill="currentColor"/><circle cx="17.5" cy="16" r="3" fill="currentColor"/></svg><span>música</span></button>
       <button class="tool" id="bSfx" type="button" title="Efectos de sonido (tecla S)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9 h4 l5 -4 v14 l-5 -4 h-4 z" fill="currentColor"/><path d="M16 8 q3 4 0 8 M19 5 q5 7 0 14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><span>efectos</span></button>
       <button class="tool" id="bMenu" type="button" title="Menú: pausa, deshacer, repetir, reiniciar, ayuda"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6 h16 M4 12 h16 M4 18 h16" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg><span>menú</span></button>
     </div>
@@ -572,9 +585,7 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
     <kbd>Espacio</kbd><span>Pausa general (para todo, también la mecha)</span>
     <kbd>U</kbd><span>Deshacer el último punto</span>
     <kbd>Retroceso</kbd><span>Repetir esta parada (por si se apretó mal)</span>
-    <kbd>1 · 2</kbd><span>En el duelo: qué Cerebro levantó la mano primero (1 izquierda, 2 derecha)</span>
-    <kbd>3</kbd><span>En el duelo: nadie levantó o no se vio, se repite el rayo</span>
-    <kbd>M</kbd><span>Música sí / no &nbsp;·&nbsp; <b>+ −</b> volumen de la música</span>
+    <kbd>1 · 2</kbd><span>En la pregunta final: marcar si acertó cada equipo (1 izquierda, 2 derecha)</span>
     <kbd>S</kbd><span>Efectos de sonido sí / no</span>
     <kbd>F</kbd><span>Pantalla completa</span>
     <kbd>R</kbd><span>Reiniciar (pregunta antes; también apaga el modo ensayo)</span>
@@ -598,17 +609,17 @@ const FIRMAS = ['Franco','Facundo','Valentino','Felipe','Mateo'];
 /* Cierre: cambien estas frases por las suyas si quieren */
 const MENSAJE = [
   '<b style="color:var(--red)">Sabías que:</b> todo este juego entró por sus ojos, viajó por sus nervios hasta su cerebro, y su cerebro lo procesó e interpretó.',
-  'Pero hay algo que ningún sistema nervioso explica: por qué hoy vinieron, gritaron, se pararon y compitieron como si fuera una final.',
+  'Pero hay algo que ningún sistema nervioso explica: por qué hoy vinieron, participaron y compitieron como si fuera una final.',
   'Todo lo que vieron hoy lo estudiamos nosotros. Las ganas de aprender nos las enseñaron ustedes.'
 ];
 /* Los dos bandos son las dos partes del sistema autónomo. Los nombres sugeridos salen de la presentación. */
 const TEAMS = [
   {side:'Simpáticos', s:'L', c:'#c62828', arrow:'←', key:'A',
    what:'El sistema que <b>prepara el cuerpo para el peligro</b>: la reacción de ataque o huida.',
-   sugg:['Las Médulas Veloces','Los Aferentes Furiosos','Los Eferentes Express','Los Lumbares Locos','Los Troncos Turbo','Los Cráneos Duros']},
+   sugg:['Equipo Médula','Vía Aferente','Equipo Encéfalo','Equipo Cervical','Equipo Somático','Equipo Tronco']},
   {side:'Parasimpáticos', s:'R', c:'#1d3f9e', arrow:'→', key:'L',
    what:'El sistema que <b>controla el cuerpo cuando está en reposo</b>.',
-   sugg:['Los Digestivos Felices','Los Cerebelos Zen','Los Diencéfalos Tranqui','Los Coccígeos Relajados','Las Vías Serenas','Los Sacros Pacíficos']}
+   sugg:['Equipo Cerebelo','Vía Eferente','Equipo Diencéfalo','Equipo Torácico','Equipo Autónomo','Equipo Periférico']}
 ];
 /* Turnos: 3 para cada equipo (2 normales y 1 dorada). Arrancan los Parasimpáticos. */
 const TURNS = [1,0,1,0,1,0];
@@ -683,8 +694,7 @@ const STATIONS = [
     pre: () => { $('dog').classList.add('in'); on('m-guau'); face('scared'); const f=$('figAll'); f.classList.remove('jump'); void f.getBoundingClientRect(); f.classList.add('jump'); sfx('bark'); later(()=>sfx('bark'),650); },
     run: async () => {
       on('l-sangre1'); on('l-sangre2'); on('l-dig-down');
-      await wait(700);
-      await moment('¡Simpático activado!', '¡TODOS DE PIE!', 3400);
+      await wait(900);
     },
     end: () => { $('dog').classList.add('in'); on('m-guau'); face('scared'); on('l-sangre1'); on('l-sangre2'); on('l-dig-down'); }
   },
@@ -890,8 +900,9 @@ const SONGS = {
   }}
 };
 const M = {want:null, tr:null, timer:null, intensity:0};
-function music(name){ M.want = name; if(ac) switchTrack(); }
-function startMusicIfWanted(){ if(M.want) switchTrack(); }
+/* sin música de fondo: el juego queda serio, solo con efectos cortos */
+function music(name){ M.want = null; }
+function startMusicIfWanted(){}
 function switchTrack(){
   const name = M.want; if(M.tr && M.tr.name===name) return;
   const now = ac.currentTime;
@@ -1150,7 +1161,7 @@ function intro(){
     '<h1 class="title fit">Sos el <span class="hl">Impulso</span> '+BOLT_SM+'</h1>' +
     '<p class="lead">Hoy ustedes son <b>la señal nerviosa</b>. Viajan por el cuerpo en dos equipos que compiten.</p>' +
     (fresh15 ?
-      '<div class="resume"><p>Hay una partida a medias: '+(p.stage==='duel'?'duelo final':'parada '+(p.i+1))+' · '+nm(0)+' '+p.score[0]+' – '+p.score[1]+' '+nm(1)+'</p>' +
+      '<div class="resume"><p>Hay una partida a medias: '+(p.stage==='duel'?'pregunta final':'parada '+(p.i+1))+' · '+nm(0)+' '+p.score[0]+' – '+p.score[1]+' '+nm(1)+'</p>' +
       '<div class="row"><button class="go small" id="newg" type="button" style="margin-left:0">Empezar de nuevo (N)</button><button class="go" id="resume" type="button">Seguir la partida <kbd>Enter</kbd></button></div></div>'
     : '<div class="row"><span class="hint"><span class="k-only">H: ayuda · F: pantalla completa · '+(ENSAYO?'<b style="color:var(--red)">MODO ENSAYO: E para salir</b>':'E: modo ensayo')+'</span><span class="t-only">Pausa, deshacer y más: botón «menú», arriba a la derecha</span></span><button class="go" id="start" type="button">Empezar <kbd>Enter</kbd></button></div>') +
     '<p class="credits">Un juego de Franco, Facundo, Valentino, Felipe y Mateo.</p>');
@@ -1219,7 +1230,7 @@ function lineup(){
   setNote(
     '<div class="eyebrow"><span>Así quedan los equipos</span></div>' +
     '<div class="lineup">'+card(0)+'<span class="vsbig">VS</span>'+card(1)+'</div>' +
-    '<p class="brainy">'+BRAIN+'<span>Cada equipo elige ahora su <b>Cerebro</b>: la persona que dice la respuesta final y que juega el duelo del final.</span></p>' +
+    '<p class="brainy">'+BRAIN+'<span>Cada equipo elige ahora su <b>Cerebro</b>: la persona que dice en voz alta la respuesta de su equipo.</span></p>' +
     '<div class="row"><span></span><button class="go" id="ready" type="button">Ya eligieron <kbd>Enter</kbd></button></div>');
   bindNext('ready', rules);
 }
@@ -1239,7 +1250,7 @@ function rules(){
       '<div class="rule">'+I.turn+'<p>Responde el equipo marcado.<small>Su Cerebro dice la respuesta.</small></p></div>' +
       '<div class="rule">'+I.fuse+'<p>'+secs().turno+' segundos por pregunta.<small>Cuando se prende la mecha.</small></p></div>' +
       '<div class="rule">'+I.steal+'<p>Si fallan, roba el otro equipo.<small>Nadie pierde puntos.</small></p></div>' +
-      '<div class="rule">'+I.gold+'<p>Las dos últimas valen doble.<small>Y al final: duelo de Cerebros, a mano alzada.</small></p></div>' +
+      '<div class="rule">'+I.gold+'<p>Las dos últimas valen doble.<small>Y al final: una pregunta para los dos equipos.</small></p></div>' +
     '</div>' +
     '<div class="row"><span class="hint">6 paradas: 3 para cada equipo</span><button class="go" id="play" type="button">¡A jugar! <kbd>Enter</kbd></button></div>');
   bindNext('play', () => goTo(0));
@@ -1339,6 +1350,7 @@ async function choose(k){
   }
 }
 async function timeout(){
+  if(phase==='duel'){ finalJudge(); return; }
   const s = STATIONS[state.i]; if(!s || phase!=='answer') return;
   phase = 'suspense';
   state.shorts++;
@@ -1373,138 +1385,103 @@ function finishStation(){
   row.hidden = false;
   const last = state.i === STATIONS.length-1;
   const nx = STATIONS[state.i+1];
-  $('next').innerHTML = (last ? '¡Al duelo final!' : nx && nx.gold ? 'Parada dorada' : 'Seguir') + ' <kbd>Enter</kbd>';
+  $('next').innerHTML = (last ? 'Pregunta final' : nx && nx.gold ? 'Parada dorada' : 'Seguir') + ' <kbd>Enter</kbd>';
   fitNote();
   bindNext('next', () => goTo(state.i+1));
 }
 
-/* --- duelo final de Cerebros --- */
-const DECOYS = [
-  {art:'<svg viewBox="0 0 220 160"><path d="M20 60 C60 150 170 150 205 40 C180 95 70 110 20 60 Z" fill="#fff176" stroke="#2b2f37" stroke-width="6" stroke-linejoin="round"/><path d="M205 40 l8 -14" stroke="#2b2f37" stroke-width="6" stroke-linecap="round"/></svg>', cap:'Es una banana.'},
-  {art:'<div class="word">RAYO</div>', cap:'Es la palabra, no el rayo.'},
-  {art:'<svg viewBox="0 0 200 120"><path d="M20 60 C 60 10, 140 10, 180 60 C 140 110, 60 110, 20 60 Z" fill="#fff" stroke="#2b2f37" stroke-width="6"/><circle cx="100" cy="60" r="24" fill="#1d3f9e"/><circle cx="100" cy="60" r="10" fill="#2b2f37"/></svg>', cap:'Es un ojo mirándolos.'}
-];
-const BOLT = '<svg viewBox="0 0 200 300"><path d="M118 8 L40 166 L96 166 L70 292 L162 118 L104 118 L138 8 Z" fill="#fff" stroke="#2b2f37" stroke-width="7" stroke-linejoin="round"/></svg>';
-
-/* El que maneja es el árbitro: marca con 1 o 2 qué Cerebro levantó la mano primero. Al mejor de 3 rayos. */
-function duelTarget(){ return state.tiebreak ? 1 : 2; }
-function raysHTML(){
-  const need = duelTarget();
-  const r = t => '<span class="rays">'+Array.from({length:need},(_,k)=>'<i class="'+(k<state.rays[t]?'on':'')+'"></i>').join('')+'</span>';
-  return '<div class="duel-score"><span class="L">'+nm(0)+' '+r(0)+'</span><span>–</span><span class="R">'+r(1)+' '+nm(1)+'</span></div>';
+/* --- pregunta final: los dos equipos ordenan el recorrido de la señal (vale 2 para cada equipo que acierte) ---
+   Las fases internas siguen llamándose 'duel-*' para que deshacer, repetir y recuperar la partida funcionen igual. */
+const FINAL = {
+  cards: [
+    {k:'A', t:'Tronco del encéfalo'},
+    {k:'B', t:'Pie'},
+    {k:'C', t:'Cerebro'},
+    {k:'D', t:'Nervios de la pierna'},
+    {k:'E', t:'Médula espinal'}
+  ],
+  order: ['B','D','E','A','C']
+};
+const FINAL_SEC = () => ENSAYO ? 10 : 40;
+function cardsHTML(){
+  return '<div class="cards">' + FINAL.cards.map(c => '<div class="card-o"><b>'+c.k+'</b><span>'+c.t+'</span></div>').join('') + '</div>';
 }
-function judgeHTML(){
-  return '<div class="judge">' +
-    '<button class="pick L" id="j0" type="button"><span class="k">1</span><span class="t">← '+nm(0)+'</span></button>' +
-    '<button class="pick R" id="j1" type="button"><span class="k">2</span><span class="t">'+nm(1)+' →</span></button></div>';
-}
-function bindJudge(){ [0,1].forEach(t => { const b = $('j'+t); if(b) b.onclick = () => duelPress(t); }); }
 function duelIntro(){
-  screen('duel-intro'); band(); drawScore(); music('tense'); M.intensity = 0;
+  screen('duel-intro'); band(); drawScore(); M.intensity = 0;
   state.i = STATIONS.length-1;
   state.snap = {score: state.score.slice(), awards: state.awards.length, shorts: state.shorts};
-  state.rays = [0,0]; state.rayN = 0;
+  state.finalOk = [false,false];
   saveProgress('duel');
-  const tb = state.tiebreak, pts = tb ? 1 : DUEL_PTS;
   const [a,b] = state.score, d = Math.abs(a-b);
-  const stakes = tb ? '¡Empate! Un rayo más define a los campeones.'
-    : d===0 ? 'Están empatados: el duelo define todo.'
-    : d<=pts ? nm(a>b?1:0)+' puede alcanzar o dar vuelta el partido.'
-    : nm(a>b?0:1)+' va arriba, pero el duelo vale '+pts+'.';
+  const stakes = d===0 ? 'Están empatados: la pregunta final define el partido.'
+    : d<=DUEL_PTS ? nm(a>b?1:0)+' puede alcanzar o dar vuelta el partido.'
+    : nm(a>b?0:1)+' va arriba, pero todavía hay puntos en juego.';
   setNote(
-    '<div class="eyebrow"><span>'+(tb?'Desempate':'Duelo final de Cerebros')+' · vale '+pts+'</span>'+dots(STATIONS.length)+'</div>' +
-    '<p class="ask">Los dos Cerebros pasan al frente, con las manos abajo.</p>' +
+    '<div class="eyebrow"><span>Pregunta final · vale '+DUEL_PTS+' para cada equipo que acierte</span>'+dots(STATIONS.length)+'</div>' +
+    '<p class="ask">Ahora juegan los dos equipos a la vez.</p>' +
     '<p class="relator">'+stakes+'</p>' +
-    '<p class="scene">Cuando aparezca <span class="hl">el rayo</span>, gana el primero que <b>levante la mano y grite el nombre de su equipo</b>. Si levantan la mano con una trampa, pierden ese rayo.</p>' +
-    '<p class="hint">'+(tb?'Un solo rayo define.':'Al mejor de 3 rayos.')+' El que maneja marca quién levantó primero: <kbd>1</kbd> izquierda · <kbd>2</kbd> derecha.</p>' +
-    '<div class="row"><span></span><button class="go" id="ready" type="button">Que empiece <kbd>Enter</kbd></button></div>');
+    '<p class="scene">Van a ver cinco partes del cuerpo, desordenadas. Cada equipo tiene que decir <b>en qué orden viajó la señal</b>, desde el pie hasta el cerebro.</p>' +
+    '<p class="hint">Cuando termine el tiempo, cada Cerebro dice su orden en voz alta, con las letras.</p>' +
+    '<div class="row"><span></span><button class="go" id="ready" type="button">Ver la pregunta <kbd>Enter</kbd></button></div>');
   bindNext('ready', duelRound);
 }
-async function duelRound(){
+function duelRound(){
   screen('duel');
-  state.rayN++;
-  const head = '<div class="eyebrow"><span>Rayo '+state.rayN+'</span></div>' + raysHTML();
-  setNote(head +
-    '<p class="wait">Atentos…</p><p class="scene">Manos abajo. No vale adelantarse.</p>' +
-    '<p class="hint">Si alguien levanta la mano antes del rayo, marcá quién fue: <kbd>1</kbd> o <kbd>2</kbd>.</p>' + judgeHTML());
-  bindJudge();
-  duel = {stage:'wait'};
-  const D = duel, fl = $('flash');
-  const halves = '<div class="halves"><span style="color:var(--red)">1 ← '+nm(0)+'</span><span style="color:var(--blue)">'+nm(1)+' → 2</span></div>';
-  const pool = DECOYS.slice().sort(()=>Math.random()-.5).slice(0, Math.floor(Math.random()*3));
-  duck(.5, .5);
-  await wait(1400 + Math.random()*1200, true);
-  for(const d of pool){
-    if(duel!==D) return;
-    D.stage = 'decoy';
-    fl.className = 'flash'; fl.innerHTML = d.art + '<p>'+d.cap+' ¡Manos abajo!</p>' + halves; fl.hidden = false;
-    sfx('tick');
-    await wait(1300, true);
-    if(duel!==D) return;
-    fl.hidden = true; D.stage = 'wait';
-    await wait(900 + Math.random()*1400, true);
-  }
-  if(duel!==D) return;
-  D.stage = 'go';
-  fl.className = 'flash real'; fl.innerHTML = BOLT + halves; fl.hidden = false;
-  sfx('go');
-  await wait(1700, true);
-  if(duel!==D) return;
-  fl.hidden = true;
-  setNote(head +
-    '<p class="ask">¿Qué Cerebro levantó la mano primero?</p>' + judgeHTML() +
-    '<div class="judge"><button class="pick N" id="j2" type="button"><span class="k">3</span><span class="t">Nadie o no se vio: repetir el rayo</span></button></div>');
-  bindJudge();
-  $('j2').onclick = duelRedo;
-}
-function duelPress(team){
-  if(!duel || phase!=='duel' || paused) return;
-  const D = duel; duel = null;
-  $('flash').hidden = true;
-  if(D.stage==='go') roundEnd(team, false);
-  else roundEnd(1-team, true, team, D.stage);
-}
-function duelRedo(){
-  if(!duel || duel.stage!=='go' || phase!=='duel' || paused) return;
-  duel = null; state.rayN--; toast('Se repite el rayo'); duelRound();
-}
-function roundEnd(winner, early, culprit, st){
-  screen('duel-round');
-  state.rays[winner]++;
-  const done = state.rays[winner] >= duelTarget();
-  if(early){ sfx('bzzt'); veil('red'); shake(); state.shorts++; burn(); } else sfx('ding');
-  const head = early ? '¡Se adelantó el Cerebro de '+nm(culprit)+'!' : '¡Rayo para '+nm(winner)+'!';
-  const body = early ? (st==='decoy' ? 'Levantó la mano con una trampa.' : 'Levantó la mano antes del rayo.')+' El rayo es para <b style="color:'+TEAMS[winner].c+'">'+nm(winner)+'</b>.' : '';
   setNote(
-    '<div class="eyebrow"><span>Rayo '+state.rayN+'</span></div>' + raysHTML() +
-    '<p class="shout" style="color:'+TEAMS[early ? culprit : winner].c+'">'+head+'</p>' +
-    (body ? '<p class="scene" style="display:block">'+body+'</p>' : '') +
-    '<div class="row"><span></span><button class="go" id="next" type="button">'+(done ? 'Resultado del duelo' : 'Próximo rayo')+' <kbd>Enter</kbd></button></div>');
-  bindNext('next', done ? () => duelEnd(winner) : duelRound);
+    '<div class="eyebrow"><span>Pregunta final</span></div>' +
+    '<p class="ask">¿En qué orden viajó la señal, desde el pie hasta el cerebro?</p>' +
+    cardsHTML() +
+    '<div id="fusebox">'+fuseHTML()+'</div>' +
+    '<div class="row"><span class="hint">Los dos equipos piensan a la vez</span><button class="go" id="ready" type="button">Ya tienen la respuesta <kbd>Enter</kbd></button></div>');
+  sfx('whoosh');
+  startFuse(FINAL_SEC());
+  bindNext('ready', finalJudge);
 }
-async function duelEnd(winner){
-  screen('duel-done'); duck(1, .5);
-  const pts = state.tiebreak ? 1 : DUEL_PTS;
-  state.duelDone = true;
-  const [ra, rb] = state.rays;
+/* se acabó el tiempo o ya respondieron: cada Cerebro dice su orden y el que maneja marca quién acertó */
+function finalJudge(){
+  screen('duel-judge');
+  state.finalOk = [false,false];
+  const j = t => '<button class="pick '+TEAMS[t].s+'" id="j'+t+'" type="button"><span class="k">'+(t+1)+'</span><span class="t">'+(t===0?'← ':'')+nm(t)+(t===1?' →':'')+'</span><span class="mark" id="mk'+t+'">no acertó</span></button>';
   setNote(
-    '<div class="eyebrow"><span>Resultado del duelo</span></div>' +
-    '<p class="shout" style="color:'+TEAMS[winner].c+'">¡Duelo para '+nm(winner)+(state.tiebreak ? '' : ': '+Math.max(ra,rb)+' a '+Math.min(ra,rb))+'!</p>' +
-    '<p class="scene" style="display:block">Cada vez que vieron el rayo, la señal hizo este viaje:</p>' +
-    '<ul class="chain" id="chain">' +
-      '<li>los ojos ven el rayo</li><li class="ar">→</li>' +
-      '<li class="af">nervios, vía aferente</li><li class="ar">→</li>' +
-      '<li class="af">el cerebro interpreta</li><li class="ar">→</li>' +
-      '<li class="ef">vía eferente</li><li class="ar">→</li>' +
-      '<li class="ef">el somático levanta la mano</li>' +
-    '</ul>' +
+    '<div class="eyebrow"><span>Pregunta final</span></div>' +
+    '<p class="ask">Cada Cerebro dice su orden en voz alta.</p>' +
+    cardsHTML() +
+    '<p class="scene" style="display:block">¿Quién acertó? Marcá cada equipo y después mostrá la respuesta.</p>' +
+    '<div class="judge">'+j(0)+j(1)+'</div>' +
+    '<div class="row"><span></span><button class="go" id="ready" type="button">Mostrar la respuesta <kbd>Enter</kbd></button></div>');
+  [0,1].forEach(t => { $('j'+t).onclick = () => toggleOk(t); });
+  bindNext('ready', finalReveal);
+}
+function toggleOk(t){
+  if(phase!=='duel-judge' || paused) return;
+  state.finalOk[t] = !state.finalOk[t];
+  const b = $('j'+t); if(!b) return;
+  b.classList.toggle('yes', state.finalOk[t]);
+  $('mk'+t).textContent = state.finalOk[t] ? 'acertó ✓' : 'no acertó';
+  sfx('pop');
+}
+async function finalReveal(){
+  screen('duel-done');
+  const ok = state.finalOk.slice();
+  setNote(
+    '<div class="eyebrow"><span>Respuesta</span></div>' +
+    '<p class="ask">El recorrido de la señal:</p>' +
+    '<ol class="route" id="route">' + FINAL.order.map(k => '<li><b>'+k+'</b><span>'+FINAL.cards.find(c => c.k===k).t+'</span></li>').join('') + '</ol>' +
+    '<p class="relator" id="res" hidden></p>' +
     '<p class="relator" id="rel" hidden></p>' +
     '<div class="row" id="endrow" hidden><span></span><button class="go" id="end" type="button">¿Quién ganó? <kbd>Enter</kbd></button></div>');
+  for(const li of [...$('route').children]){ li.classList.add('on'); tone(523,0,.12,'triangle',.07); await wait(500); if(!$('route')) return; }
   const before = state.score.slice();
-  award(winner, pts); sfx('steal');
-  for(const li of [...$('chain').children]){ li.classList.add('on'); if(!li.classList.contains('ar')) tone(660,0,.08,'triangle',.08); await wait(380); }
-  const rel = $('rel'); if(!rel) return;
-  rel.hidden = false; rel.innerHTML = relate(swing(winner, before));
+  state.duelDone = true;
+  const res = $('res'); res.hidden = false;
+  res.innerHTML = ok[0] && ok[1] ? 'Acertaron los dos equipos: +'+DUEL_PTS+' para cada uno.'
+    : ok[0] || ok[1] ? 'Acertó '+nm(ok[0]?0:1)+': +'+DUEL_PTS+'.'
+    : 'Ningún equipo acertó el orden.';
+  if(ok[0]) award(0, DUEL_PTS);
+  if(ok[1]) award(1, DUEL_PTS);
+  sfx(ok[0] || ok[1] ? 'ding' : 'bzzt');
+  const one = ok[0] !== ok[1] ? (ok[0] ? 0 : 1) : null;
+  const rel = $('rel'); rel.hidden = false; rel.innerHTML = relate(one!==null ? swing(one, before) : '');
   $('endrow').hidden = false; fitNote();
   bindNext('end', champions);
 }
@@ -1512,27 +1489,27 @@ async function duelEnd(winner){
 /* --- campeones --- */
 async function champions(){
   const [a,b] = state.score;
-  if(a===b){ state.tiebreak = true; state.duelDone = false; return duelIntro(); }
   screen('champ'); band(); drawScore(); clearProgress(); $('burns').innerHTML = '';
   music(null); duck(1,.1);
   sfx('drum',1.6);
   setNote('<p class="wait" style="color:var(--pencil)">Y los campeones del sistema nervioso son…</p>');
   await wait(1800);
-  const w = a>b?0:1;
-  music('fest');
+  const w = a>b?0:1, tie = a===b;
   setNote(
     '<div class="champ">' +
       '<svg class="crown" viewBox="0 0 120 80" aria-hidden="true"><path d="M10 70 L14 22 L38 46 L60 10 L82 46 L106 22 L110 70 Z" fill="#fff176" stroke="#2b2f37" stroke-width="5" stroke-linejoin="round"/><circle cx="60" cy="10" r="6" fill="#c62828"/></svg>' +
-      '<p class="sub">Campeones del sistema nervioso</p>' +
-      EMB[w] +
-      '<p class="who fit '+TEAMS[w].s+'">'+nm(w)+'</p>' +
-      '<p class="sub" style="color:'+TEAMS[w].c+'">'+TEAMS[w].side+' · <span class="n">'+Math.max(a,b)+' a '+Math.min(a,b)+'</span></p>' +
+      (tie
+        ? '<p class="sub">Empate '+a+' a '+b+': campeones los dos equipos</p>' +
+          '<p class="who fit L" style="font-size:2.4em">'+nm(0)+'</p><p class="who fit R" style="font-size:2.4em">'+nm(1)+'</p>'
+        : '<p class="sub">Campeones del sistema nervioso</p>' + EMB[w] +
+          '<p class="who fit '+TEAMS[w].s+'">'+nm(w)+'</p>' +
+          '<p class="sub" style="color:'+TEAMS[w].c+'">'+TEAMS[w].side+' · <span class="n">'+Math.max(a,b)+' a '+Math.min(a,b)+'</span></p>') +
       '<p class="clap">¡Un aplauso para los dos equipos!</p>' +
       '<div class="row" style="justify-content:center;width:100%"><button class="go" id="dip" type="button" style="margin-left:0">Ver lo que recorrieron <kbd>Enter</kbd></button></div>' +
     '</div>');
   sfx('win');
   const r = note.getBoundingClientRect();
-  const col = TEAMS[w].c;
+  const col = tie ? '#2b2f37' : TEAMS[w].c;
   confetti(col, r.left + r.width*.3, r.top + r.height*.4, 40);
   later(()=>confetti(col, r.left + r.width*.7, r.top + r.height*.4, 40), 350);
   later(()=>confetti('#fff176', r.left + r.width*.5, r.top + r.height*.2, 40), 700);
@@ -1556,7 +1533,7 @@ async function diploma(){
       '<div class="eyebrow"><span>Diploma de Impulso Nervioso</span></div>' +
       '<h2>Esta sala recorrió el sistema nervioso</h2>' +
       '<div class="ideas">' + IDEAS.map((d,k)=>'<div class="idea '+d.c+'" id="id'+k+'"><b>'+d.h+'</b><span>'+d.t+'</span><i>('+d.m+')</i></div>').join('') + '</div>' +
-      '<div class="row"><span class="photo">¡Sáquenle una foto!</span><span class="hint" style="font-size:.85em">Campeones: <b style="color:'+TEAMS[w].c+'">'+nm(w)+'</b> · '+Math.max(a,b)+' a '+Math.min(a,b)+'</span><button class="go" id="last" type="button" style="margin-left:0">Una última señal <kbd>Enter</kbd></button></div>' +
+      '<div class="row"><span class="photo">¡Sáquenle una foto!</span><span class="hint" style="font-size:.85em">'+(a===b ? 'Empate '+a+' a '+b+': campeones los dos' : 'Campeones: <b style="color:'+TEAMS[w].c+'">'+nm(w)+'</b> · '+Math.max(a,b)+' a '+Math.min(a,b))+'</span><button class="go" id="last" type="button" style="margin-left:0">Una última señal <kbd>Enter</kbd></button></div>' +
     '</div>');
   setHeart('slow'); face('happy');
   bindNext('last', farewell);
@@ -1640,8 +1617,8 @@ function undo(){
 function repeat(){
   const inStation = ['read','answer','suspense','done'].includes(phase) && state.i>=0;
   const inDuel = phase.startsWith('duel');
-  if(!inStation && !inDuel){ toast('Retroceso repite una parada o el duelo'); return; }
-  ask(inDuel ? '¿Repetir el duelo?' : '¿Repetir la parada '+(state.i+1)+'?', 'Se borran los puntos que se sumaron en '+(inDuel?'el duelo':'esta parada')+'.', () => {
+  if(!inStation && !inDuel){ toast('Retroceso repite una parada o la pregunta final'); return; }
+  ask(inDuel ? '¿Repetir la pregunta final?' : '¿Repetir la parada '+(state.i+1)+'?', 'Se borran los puntos que se sumaron en '+(inDuel?'la pregunta final':'esta parada')+'.', () => {
     const sn = state.snap; if(!sn) return;
     state.score = sn.score.slice(); state.awards.length = Math.min(state.awards.length, sn.awards); state.shorts = sn.shorts; syncBurns();
     if(inDuel){ state.duelDone = false; duelIntro(); }
@@ -1682,14 +1659,11 @@ document.addEventListener('keydown', e => {
   if(!$('ovHelp').hidden){ e.preventDefault(); if(k==='Escape' || kl==='h' || k==='Enter' || k==='?') help(false); return; }
   if(!$('ovMenu').hidden){ if(k==='Escape'){ e.preventDefault(); menu(false); } return; }
   if(k===' ' || kl==='p'){ e.preventDefault(); if(phase!=='intro' && phase!=='teams') setPause(!paused); return; }
-  if(kl==='m'){ e.preventDefault(); toggleMusic(); return; }
   if(kl==='s'){ e.preventDefault(); toggleSfx(); return; }
-  if(k==='+' || k==='='){ e.preventDefault(); volume(.1); return; }
-  if(k==='-'){ e.preventDefault(); volume(-.1); return; }
   if(kl==='f'){ e.preventDefault(); fullscreen(); return; }
   if(paused) return;
   if(kl==='h' || k==='?'){ e.preventDefault(); help(true); return; }
-  if(phase==='duel'){ if(k==='1'){ e.preventDefault(); duelPress(0); } else if(k==='2'){ e.preventDefault(); duelPress(1); } else if(k==='3'){ e.preventDefault(); duelRedo(); } return; }
+  if(phase==='duel-judge' && (k==='1' || k==='2')){ e.preventDefault(); toggleOk(+k-1); return; }
   if(kl==='r'){ e.preventDefault(); restart(); return; }
   if(kl==='u'){ e.preventDefault(); undo(); return; }
   if(k==='Backspace'){ e.preventDefault(); repeat(); return; }
@@ -1709,10 +1683,6 @@ document.addEventListener('keydown', e => {
 document.addEventListener('keyup', e => { if(e.key===' ' && e.target && e.target.tagName==='BUTTON') e.preventDefault(); });
 document.addEventListener('pointerdown', e => {
   audio();
-  /* en el duelo, el que maneja también puede hacer clic en la mitad del rayo que corresponde */
-  if(phase!=='duel' || paused) return;
-  if(!(e.target.closest && e.target.closest('#flash'))) return;
-  duelPress(e.clientX < innerWidth/2 ? 0 : 1);
 });
 /* en iPad y celulares el sonido se habilita con un toque completo */
 document.addEventListener('touchend', () => audio(), {passive:true});
