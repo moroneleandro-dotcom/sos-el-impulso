@@ -30,6 +30,8 @@ const CONFIGS = {
   'win125':    {width:1536, height:864,  dpr:1.25},
   'win150':    {width:1280, height:720,  dpr:1.5},
   'win125-1366': {width:1093, height:614, dpr:1.25},
+  'ipad':      {width:1194, height:834,  dpr:2, touch:true},
+  'ipad-10':   {width:1080, height:810,  dpr:2, touch:true},
 };
 // Respuesta correcta de cada parada (índice 0, 1, 2) y a quién le toca (0 Simpáticos, 1 Parasimpáticos)
 const CORRECT = [1,2,0,1,2,0];
@@ -122,7 +124,7 @@ async function rehearse(browser, base, scenario, cfgName, opts={}){
   const dir = path.join(OUT, scenario.name, cfgName);
   fs.rmSync(dir, {recursive:true, force:true});
   fs.mkdirSync(dir, {recursive:true});
-  const ctx = await browser.newContext({viewport:{width:cfg.width, height:cfg.height}, deviceScaleFactor:cfg.dpr, recordVideo: opts.video===false ? undefined : {dir, size:{width:Math.min(1280,cfg.width), height:Math.round(Math.min(1280,cfg.width)*cfg.height/cfg.width)}}});
+  const ctx = await browser.newContext({viewport:{width:cfg.width, height:cfg.height}, deviceScaleFactor:cfg.dpr, hasTouch:!!cfg.touch, isMobile:!!cfg.touch, recordVideo: opts.video===false ? undefined : {dir, size:{width:Math.min(1280,cfg.width), height:Math.round(Math.min(1280,cfg.width)*cfg.height/cfg.width)}}});
   const page = await ctx.newPage();
   const log = [], problems = [], shots = [];
   page.on('console', m => { if(['error','warning'].includes(m.type())) log.push(m.type()+': '+m.text()); });
@@ -323,6 +325,43 @@ const SCENARIOS = [
   }},
 ];
 
+// Partida entera con el dedo, sin teclado (por ejemplo, desde un iPad): también pausa, deshacer y repetir desde el menú
+SCENARIOS.push({name:'tactil', desc:'Todo con toques, sin teclado', run: async H => {
+  const p = H.page, tap = async (sel, ms=700) => { await p.locator(sel).first().tap({force:true}); await H.sleep(ms); };
+  await H.shot('portada');
+  await tap('#start'); await H.waitPhase('teams'); await tap('#ot0', 300); await tap('#ready', 800);
+  await H.waitPhase('cry'); await tap('#count'); await H.waitPhase('cry-pick', 15000); await tap('#pk0', 300);
+  await H.waitPhase('rules', 10000); await H.shot('reglas'); await tap('#play');
+  for(let i=0;i<6;i++){
+    await H.waitPhase('read'); await p.waitForSelector('#flash', {state:'hidden', timeout:15000}); await H.sleep(450);
+    await tap('#reveal'); await H.waitPhase('answer');
+    if(i===0){
+      await tap('#bMenu', 400); await H.shot('menu');
+      await tap('#ovMenu [data-m="pause"]', 300);
+      const a = await p.locator('#sec').textContent(); await H.sleep(2000); const b = await p.locator('#sec').textContent();
+      if(a!==b) throw new Error('la mecha avanzó en pausa');
+      await H.shot('pausa-tactil'); await tap('#ovPause', 300);
+      if(await p.evaluate(() => window.__impulso.paused)) throw new Error('tocar no sacó la pausa');
+      const bad = [0,1,2].find(k=>k!==CORRECT[i]);
+      await tap('.opt[data-k="'+bad+'"]', 1500);
+      await tap('#bMenu', 300); await tap('#ovMenu [data-m="repeat"]', 300); await H.shot('repetir-tactil'); await tap('#askYes', 600);
+      await H.waitPhase('read'); await H.sleep(450); await tap('#reveal'); await H.waitPhase('answer');
+    }
+    await tap('.opt[data-k="'+CORRECT[i]+'"]', 1500);
+    await H.untilDone(); if(i===1){ await tap('#bMenu', 300); await tap('#ovMenu [data-m="undo"]', 300); await H.shot('deshacer-tactil'); }
+    await H.sleep(400); await tap('#next');
+  }
+  await H.waitPhase('duel-intro'); await H.shot('duelo'); await tap('#ready', 300);
+  await H.waitPhase('duel'); await p.waitForSelector('.flash.real:not([hidden])', {timeout:20000}); await H.sleep(250);
+  await p.touchscreen.tap(Math.round(H.page.viewportSize().width*0.8), 300);
+  await H.waitPhase('duel-done'); await H.waitSel('#endrow:not([hidden])', 15000); await H.shot('duelo-resultado');
+  await tap('#end'); await H.waitPhase(['champ','duel-intro'], 10000);
+  if(await H.phase()==='duel-intro'){ await tap('#ready', 300); await p.waitForSelector('.flash.real:not([hidden])', {timeout:20000}); await p.touchscreen.tap(50, 300); await H.waitSel('#endrow:not([hidden])', 15000); await tap('#end'); }
+  await H.waitPhase('champ'); await H.sleep(2600); await H.shot('campeones');
+  await tap('#dip'); await H.waitPhase('diploma'); await H.sleep(4200); await H.shot('diploma');
+  await tap('#last'); await H.waitPhase('bye'); await H.sleep(13000); await H.shot('cierre');
+}});
+
 /* ---------- partida con tiempos humanos, para medir la duración ---------- */
 const HUMAN = {read:8000, think:8000, after:6000, champ:6000, dip:12000, bye:15000};
 async function timing(browser, base){
@@ -357,7 +396,7 @@ if(args.includes('--tiempo')){
   const only = args.filter(a => !a.startsWith('--'));
   const scs = SCENARIOS.filter(s => !only.some(o => SCENARIOS.some(x=>x.name===o)) || only.includes(s.name));
   const cfs = Object.keys(CONFIGS).filter(c => !only.some(o => CONFIGS[o]) || only.includes(c));
-  const jobs = []; for(const s of scs) for(const c of cfs) jobs.push([s,c]);
+  const jobs = []; for(const s of scs) for(const c of cfs) if(s.name!=='tactil' || CONFIGS[c].touch) jobs.push([s,c]);
   const par = +(process.env.PAR || 4);
   let k = 0;
   await Promise.all(Array.from({length:par}, async () => {

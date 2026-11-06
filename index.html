@@ -34,7 +34,7 @@
 }
 html{font-size:clamp(13px,min(1.55vw,2.75vh),32px);height:100%}
 body{
-  margin:0;height:100%;overflow:hidden;
+  margin:0;height:100%;overflow:hidden;touch-action:manipulation;-webkit-tap-highlight-color:transparent;
   background-color:var(--paper);
   background-image:
     linear-gradient(90deg,transparent 40px,var(--margin) 40px,var(--margin) 42px,transparent 42px),
@@ -324,6 +324,11 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
 .ov h2{font-family:var(--f-marker);font-weight:400;margin:0;font-size:1.6rem}
 .ov .pausa{font-family:var(--f-marker);font-size:clamp(4rem,14vw,10rem);line-height:1;margin:0;transform:rotate(-3deg)}
 .ov p{margin:0;font-size:1rem}
+.menu{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
+.menu button{display:flex;flex-direction:column;align-items:flex-start;gap:.15rem;text-align:left;background:#fff;border:3px solid var(--pencil);border-radius:12px 20px 10px 18px;padding:.55rem .8rem;cursor:pointer;font-size:1rem;min-height:3.2rem}
+.menu button:hover{background:var(--hl)}
+.menu button small{color:var(--soft);font-size:.72rem;font-weight:700}
+#ovPause{cursor:pointer}
 .keylist{display:grid;grid-template-columns:auto 1fr;gap:.3rem .9rem;font-size:.85rem;align-items:baseline}
 .keylist kbd{font-family:var(--f-body);font-weight:700;border:2px solid var(--pencil);border-radius:6px;padding:0 .4em;white-space:nowrap;justify-self:start}
 .ov .row{justify-content:flex-end}
@@ -397,6 +402,12 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
   .versus,.cries,.rules,.keys,.ideas{grid-template-columns:1fr}
   .title{font-size:2.6em}
 }
+/* tablet o pantalla táctil (por ejemplo, iPad): botones más grandes y sin carteles de teclas */
+@media (pointer:coarse){
+  .tool{font-size:.75rem;min-height:44px;padding:.2em .8em}
+  .go kbd,.reveal kbd,.k-only{display:none}
+}
+@media (pointer:fine),(pointer:none){ .t-only{display:none} }
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
@@ -413,7 +424,7 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
       <span class="tag-ensayo" id="tagEnsayo" hidden>MODO ENSAYO</span>
       <button class="tool" id="bMus" type="button" title="Música (tecla M)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18 V5 l11 -2 v13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6.5" cy="18" r="3" fill="currentColor"/><circle cx="17.5" cy="16" r="3" fill="currentColor"/></svg><span>música</span></button>
       <button class="tool" id="bSfx" type="button" title="Efectos de sonido (tecla S)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9 h4 l5 -4 v14 l-5 -4 h-4 z" fill="currentColor"/><path d="M16 8 q3 4 0 8 M19 5 q5 7 0 14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><span>efectos</span></button>
-      <button class="tool" id="bHelp" type="button" title="Ayuda (tecla H)"><span>ayuda · H</span></button>
+      <button class="tool" id="bMenu" type="button" title="Menú: pausa, deshacer, repetir, reiniciar, ayuda"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6 h16 M4 12 h16 M4 18 h16" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg><span>menú</span></button>
     </div>
   </header>
 
@@ -513,7 +524,19 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
 <div id="veil" aria-hidden="true"></div>
 <div id="fx" aria-hidden="true"></div>
 <div class="flash" id="flash" hidden aria-hidden="true"></div>
-<div class="ov" id="ovPause" hidden><div class="card" style="align-items:center;text-align:center"><p class="pausa">PAUSA</p><p>Todo quedó congelado. <b>Espacio</b> para seguir.</p></div></div>
+<div class="ov" id="ovPause" hidden><div class="card" style="align-items:center;text-align:center"><p class="pausa">PAUSA</p><p>Todo quedó congelado. <b>Espacio</b> o <b>tocá acá</b> para seguir.</p></div></div>
+<div class="ov" id="ovMenu" hidden><div class="card" role="dialog" aria-label="Menú del que maneja">
+  <h2>Menú del que maneja</h2>
+  <div class="menu">
+    <button type="button" data-m="pause"><b>Pausa</b><small>congela todo, también la mecha · Espacio</small></button>
+    <button type="button" data-m="undo"><b>Deshacer el último punto</b><small>tecla U</small></button>
+    <button type="button" data-m="repeat"><b>Repetir esta parada</b><small>si se tocó mal · Retroceso</small></button>
+    <button type="button" data-m="fs"><b>Pantalla completa</b><small>tecla F</small></button>
+    <button type="button" data-m="help"><b>Ver todas las teclas</b><small>tecla H</small></button>
+    <button type="button" data-m="restart"><b>Reiniciar</b><small>pregunta antes · tecla R</small></button>
+  </div>
+  <div class="row"><button class="go" id="menuClose" type="button">Volver al juego</button></div>
+</div></div>
 <div class="ov" id="ovHelp" hidden><div class="card" role="dialog" aria-label="Ayuda">
   <h2>Teclas para el que maneja</h2>
   <div class="keylist">
@@ -1098,7 +1121,7 @@ function intro(){
     (fresh15 ?
       '<div class="resume"><p>Hay una partida a medias: '+(p.stage==='duel'?'duelo final':'parada '+(p.i+1))+' · '+nm(0)+' '+p.score[0]+' – '+p.score[1]+' '+nm(1)+'</p>' +
       '<div class="row"><button class="go small" id="newg" type="button" style="margin-left:0">Empezar de nuevo (N)</button><button class="go" id="resume" type="button">Seguir la partida <kbd>Enter</kbd></button></div></div>'
-    : '<div class="row"><span class="hint">H: ayuda · F: pantalla completa · '+(ENSAYO?'<b style="color:var(--red)">MODO ENSAYO: E para salir</b>':'E: modo ensayo')+'</span><button class="go" id="start" type="button">Empezar <kbd>Enter</kbd></button></div>') +
+    : '<div class="row"><span class="hint"><span class="k-only">H: ayuda · F: pantalla completa · '+(ENSAYO?'<b style="color:var(--red)">MODO ENSAYO: E para salir</b>':'E: modo ensayo')+'</span><span class="t-only">Pausa, deshacer y más: botón «menú», arriba a la derecha</span></span><button class="go" id="start" type="button">Empezar <kbd>Enter</kbd></button></div>') +
     '<p class="credits">Un juego de Franco, Facundo, Valentino, Felipe y Mateo.</p>');
   if(fresh15){
     bindNext('resume', () => resume(p));
@@ -1370,8 +1393,8 @@ function duelIntro(){
     '<div class="eyebrow"><span>'+(tb?'Desempate':'Duelo final de Cerebros')+' · vale '+pts+'</span>'+dots(STATIONS.length)+'</div>' +
     '<p class="ask">Los dos Cerebros, al teclado.</p>' +
     '<p class="relator">'+stakes+'</p>' +
-    '<p class="scene">Cuando aparezca <span class="hl">el rayo</span>, gana el primero que apriete su tecla. ¡Ojo con las trampas!</p>' +
-    '<div class="keys"><div class="key L"><kbd>A</kbd><span class="nm fit">'+nm(0)+'</span><small>tecla de la izquierda</small></div><div class="key R"><kbd>L</kbd><span class="nm fit">'+nm(1)+'</span><small>tecla de la derecha</small></div></div>' +
+    '<p class="scene">Cuando aparezca <span class="hl">el rayo</span>, gana el primero que apriete su tecla o toque su lado. ¡Ojo con las trampas!</p>' +
+    '<div class="keys"><div class="key L"><kbd>A</kbd><span class="nm fit">'+nm(0)+'</span><small>o tocá la mitad izquierda</small></div><div class="key R"><kbd>L</kbd><span class="nm fit">'+nm(1)+'</span><small>o tocá la mitad derecha</small></div></div>' +
     '<div class="row"><span class="hint">La sala puede gritar, pero no tocar.</span><button class="go" id="ready" type="button">Que empiece <kbd>Enter</kbd></button></div>');
   bindNext('ready', duelRun);
 }
@@ -1550,7 +1573,19 @@ $('askYes').onclick = () => closeAsk(true);
 $('askNo').onclick = () => closeAsk(false);
 function help(show){ $('ovHelp').hidden = !show; holdFor(show); if(show) $('helpClose').focus({preventScroll:true}); }
 $('helpClose').onclick = () => help(false);
-$('bHelp').onclick = () => help(true);
+function menu(show){ $('ovMenu').hidden = !show; holdFor(show); if(show) $('menuClose').focus({preventScroll:true}); }
+$('bMenu').onclick = () => menu(true);
+$('menuClose').onclick = () => menu(false);
+document.querySelectorAll('#ovMenu .menu button').forEach(b => b.onclick = () => {
+  const m = b.dataset.m; menu(false);
+  if(m==='pause'){ if(phase!=='intro' && phase!=='teams') setPause(true); else toast('La pausa se usa durante el juego'); }
+  else if(m==='undo') undo();
+  else if(m==='repeat') repeat();
+  else if(m==='fs') fullscreen();
+  else if(m==='help') help(true);
+  else if(m==='restart') restart();
+});
+$('ovPause').onclick = () => setPause(false);
 $('bMus').onclick = toggleMusic;
 $('bSfx').onclick = toggleSfx;
 
@@ -1582,8 +1617,11 @@ function restart(){ ask('¿Reiniciar todo?', 'Se pierde el tanteador y se vuelve
 }); }
 function fullscreen(){
   try{
-    if(document.fullscreenElement) document.exitFullscreen();
-    else if(document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(()=>{});
+    const d = document, el = d.documentElement;
+    if(d.fullscreenElement || d.webkitFullscreenElement){ (d.exitFullscreen || d.webkitExitFullscreen).call(d); }
+    else if(el.requestFullscreen) el.requestFullscreen().catch(()=>{});
+    else if(el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+    else toast('Esta pantalla no permite pantalla completa');
   }catch(e){}
 }
 
@@ -1603,6 +1641,7 @@ document.addEventListener('keydown', e => {
   if(e.repeat){ if([' ','Enter','Backspace'].includes(k)) e.preventDefault(); return; }
   if(!$('ovAsk').hidden){ e.preventDefault(); if(k==='Enter') closeAsk(true); else if(k==='Escape' || kl==='n') closeAsk(false); return; }
   if(!$('ovHelp').hidden){ e.preventDefault(); if(k==='Escape' || kl==='h' || k==='Enter' || k==='?') help(false); return; }
+  if(!$('ovMenu').hidden){ if(k==='Escape'){ e.preventDefault(); menu(false); } return; }
   if(k===' ' || kl==='p'){ e.preventDefault(); if(phase!=='intro' && phase!=='teams') setPause(!paused); return; }
   if(kl==='m'){ e.preventDefault(); toggleMusic(); return; }
   if(kl==='s'){ e.preventDefault(); toggleSfx(); return; }
@@ -1636,6 +1675,9 @@ document.addEventListener('pointerdown', e => {
   if(e.target.closest && e.target.closest('button, .ov, header')) return;
   duelPress(e.clientX < innerWidth/2 ? 0 : 1);
 });
+/* en iPad y celulares el sonido se habilita con un toque completo */
+document.addEventListener('touchend', () => audio(), {passive:true});
+document.addEventListener('click', () => audio());
 /* si la ventana queda tapada, se pausa la partida (la mecha no se quema sola) */
 document.addEventListener('visibilitychange', () => {
   if(document.hidden && ['answer','duel'].includes(phase) && !paused) setPause(true);
