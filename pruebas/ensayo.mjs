@@ -120,6 +120,7 @@ function auditInPage(){
 async function rehearse(browser, base, scenario, cfgName, opts={}){
   const cfg = CONFIGS[cfgName];
   const dir = path.join(OUT, scenario.name, cfgName);
+  fs.rmSync(dir, {recursive:true, force:true});
   fs.mkdirSync(dir, {recursive:true});
   const ctx = await browser.newContext({viewport:{width:cfg.width, height:cfg.height}, deviceScaleFactor:cfg.dpr, recordVideo: opts.video===false ? undefined : {dir, size:{width:Math.min(1280,cfg.width), height:Math.round(Math.min(1280,cfg.width)*cfg.height/cfg.width)}}});
   const page = await ctx.newPage();
@@ -361,6 +362,7 @@ if(args.includes('--tiempo')){
       const [s,c] = jobs[k++];
       const r = await rehearse(browser, base, s, c, {ensayo: s.name!=='recarga'});
       results.push(r);
+      fs.writeFileSync(path.join(OUT, s.name, c, 'problemas.txt'), [r.error?'ERROR: '+r.error:'', ...r.console, ...r.problems].filter(Boolean).join('\n'));
       const bad = r.error || r.console.length || r.problems.length;
       console.log((bad?'✗':'✓')+' '+s.name.padEnd(12)+' '+c.padEnd(12)+' '+r.dur.toFixed(0)+'s  '+(r.score?r.score.join('-'):'')+(r.error?'  ERROR: '+r.error:'')+(r.console.length?'  consola: '+r.console.length:'')+(r.problems.length?'  problemas: '+r.problems.length:''));
     }

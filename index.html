@@ -169,7 +169,7 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
 .opt .k{flex:none;font-size:.75em;width:1.55em;height:1.55em;display:grid;place-items:center;border:2.5px solid currentColor;border-radius:50%}
 .opt.pending{background:var(--hl);border-style:dashed;animation:suspense .25s infinite alternate}
 @keyframes suspense{to{transform:scale(1.03) rotate(.6deg)}}
-.opt.wrong{color:#6d717a;border-color:#a9adb5;background:#f3f4f6;text-decoration:line-through;text-decoration-color:var(--red);text-decoration-thickness:4px;cursor:default;animation:none}
+.opt.wrong{color:#5a5e66;border-color:#a9adb5;background:#f3f4f6;text-decoration:line-through;text-decoration-color:var(--red);text-decoration-thickness:4px;cursor:default;animation:none}
 .opt.right{border-color:var(--ok);color:var(--ok);background:var(--hl2);animation:none;transform:scale(1.03) rotate(-.6deg)}
 .opt:disabled{cursor:default}
 .opt.dim{opacity:.45}
@@ -1507,22 +1507,24 @@ async function moment(top, word, ms){
 }
 
 /* ===== herramientas del que maneja ===== */
-function setPause(p){
+function setPause(p, quiet){
   if(p===paused) return;
-  if(p){ paused = true; pauseAt = performance.now(); document.body.classList.add('paused'); $('ovPause').hidden = false; }
+  if(p){ paused = true; pauseAt = performance.now(); document.body.classList.add('paused'); $('ovPause').hidden = !!quiet; }
   else { pausedTotal += performance.now() - pauseAt; paused = false; document.body.classList.remove('paused'); $('ovPause').hidden = true; }
   setMusicLevel();
 }
 let askFn = null;
+let autoPaused = false;
+function holdFor(open){ if(open){ if(!paused){ setPause(true, true); autoPaused = true; } } else if(autoPaused){ autoPaused = false; setPause(false); } }
 function ask(q, sub, yes){
   $('askText').textContent = q; $('askSub').textContent = sub || '';
-  $('ovAsk').hidden = false; askFn = yes;
+  $('ovAsk').hidden = false; askFn = yes; holdFor(true);
   $('askYes').focus({preventScroll:true});
 }
-function closeAsk(ok){ const f = askFn; askFn = null; $('ovAsk').hidden = true; if(ok && f) f(); }
+function closeAsk(ok){ const f = askFn; askFn = null; $('ovAsk').hidden = true; holdFor(false); if(ok && f) f(); }
 $('askYes').onclick = () => closeAsk(true);
 $('askNo').onclick = () => closeAsk(false);
-function help(show){ $('ovHelp').hidden = !show; if(show) $('helpClose').focus({preventScroll:true}); }
+function help(show){ $('ovHelp').hidden = !show; holdFor(show); if(show) $('helpClose').focus({preventScroll:true}); }
 $('helpClose').onclick = () => help(false);
 $('bHelp').onclick = () => help(true);
 $('bMus').onclick = toggleMusic;
