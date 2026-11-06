@@ -8,10 +8,10 @@
 @font-face{font-family:'Atkinson Hyperlegible';font-weight:400;src:url(fonts/AtkinsonHyperlegible-400.woff2) format('woff2')}
 @font-face{font-family:'Atkinson Hyperlegible';font-weight:700;src:url(fonts/AtkinsonHyperlegible-700.woff2) format('woff2')}
 @font-face{font-family:'Permanent Marker';src:url(fonts/PermanentMarker-400.woff2) format('woff2')}
-@page{size:A4;margin:11mm}
+@page{size:A4;margin:9mm}
 :root{--pencil:#2b2f37;--red:#c62828;--blue:#1d3f9e;--hl:#fff176;--soft:#4e5562}
 *{box-sizing:border-box}
-body{margin:0;background:#fff;color:var(--pencil);font:400 10.6pt/1.32 'Atkinson Hyperlegible',Verdana,Arial,sans-serif}
+body{margin:0;background:#fff;color:var(--pencil);font:400 9.9pt/1.26 'Atkinson Hyperlegible',Verdana,Arial,sans-serif}
 .page{max-width:190mm;margin:0 auto;padding:8mm 0}
 h1{font-family:'Permanent Marker',cursive;font-weight:400;font-size:22pt;margin:0;line-height:1.1}
 h1 b{color:var(--red);font-weight:400}
@@ -20,7 +20,7 @@ h2{font-family:'Permanent Marker',cursive;font-weight:400;font-size:13pt;margin:
 .cols{display:grid;grid-template-columns:1fr 1fr;gap:6mm}
 kbd{font:700 9.5pt 'Atkinson Hyperlegible',sans-serif;border:1.6px solid var(--pencil);border-bottom-width:3px;border-radius:5px;padding:0 5px;white-space:nowrap;background:#fff}
 table{width:100%;border-collapse:collapse}
-td{padding:2.5px 4px;vertical-align:top;border-bottom:1px solid #e3e8ee}
+td{padding:2px 4px;vertical-align:top;border-bottom:1px solid #e3e8ee}
 td:first-child{white-space:nowrap;width:1%}
 .big kbd{font-size:12pt}
 .say{font-style:italic}
@@ -40,7 +40,7 @@ ol li{margin:2px 0}
 <div class="page">
   <button class="print" onclick="window.print()">Imprimir</button>
   <h1>Sos el <b>Impulso</b> · guía del que maneja</h1>
-  <p class="sub">Una hoja para tener al lado de la compu. El juego dura <b>unos 6 minutos</b>. Con <b>Enter</b> se hace casi todo.</p>
+  <p class="sub">Una hoja para tener al lado de la compu. El juego dura <b>entre 5 y 7 minutos</b>. Con <b>Enter</b> se hace casi todo.</p>
 
   <div class="cols">
     <div>
@@ -74,6 +74,7 @@ ol li{margin:2px 0}
         <b>Sumé un punto de más:</b> <kbd>U</kbd>.<br>
         <b>Hay que hablar o calmar la sala:</b> <kbd>Espacio</kbd>.<br>
         <b>Se cerró o se recargó la página:</b> volver a abrirla y Enter en "Seguir la partida".<br>
+        <b>La portada dice "Hay una partida a medias" y no es la de ahora</b> (por ejemplo, de un ensayo): apretá <kbd>N</kbd>.<br>
         <b>No hay sonido:</b> tocar una tecla o hacer clic; si sigue, <kbd>M</kbd>. El juego anda igual sin sonido.<br>
         <b>Nadie apretó en el duelo:</b> Enter, se repite.
       </div>
@@ -100,10 +101,10 @@ ol li{margin:2px 0}
 
       <h2>Cuánto dura</h2>
       <table>
-        <tr><td>Portada, equipos, grito y reglas</td><td>≈ 1 min 30 s</td></tr>
-        <tr><td>6 paradas (≈ 35 s cada una)</td><td>≈ 3 min 30 s</td></tr>
-        <tr><td>Duelo, campeones, diploma y cierre</td><td>≈ 1 min 30 s</td></tr>
-        <tr><td><b>Total</b></td><td><b>≈ 6 a 7 minutos</b></td></tr>
+        <tr><td>Portada, equipos, grito y reglas</td><td>≈ 1 min a 1 min 30 s</td></tr>
+        <tr><td>6 paradas (≈ 30 s cada una)</td><td>≈ 3 a 4 min</td></tr>
+        <tr><td>Duelo, campeones, diploma y cierre</td><td>≈ 1 min 10 s</td></tr>
+        <tr><td><b>Total</b> (medido en el ensayo: 5 min 15 s)</td><td><b>≈ 5 a 7 minutos</b></td></tr>
       </table>
       <p class="sub" style="margin-top:6px">Consejo: si la sala está muy entusiasmada, no apures. Si se alarga, leé más corto las explicaciones.</p>
     </div>
