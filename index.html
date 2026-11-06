@@ -650,7 +650,7 @@ const STATIONS = [
       off('l-sangre1'); off('l-sangre2'); off('l-dig-down'); on('l-dig-up');
       on('l-corazon'); setHeart('slow'); face('smile');
       fb.insertAdjacentHTML('beforeend','<div class="breath"><div class="ball"></div><span id="bt">Todos juntos: inspiren…</span></div>');
-      refit(); sfx('breath'); await wait(3500);
+      fitNote(); sfx('breath'); await wait(3500);
       if($('bt')) $('bt').textContent = '…y suelten el aire.';
       await wait(3500);
       if($('bt')) $('bt').textContent = 'Así se siente el cuerpo en reposo.';
@@ -930,7 +930,8 @@ function fitNote(){
   if(k < 1) fitAll();
 }
 let refitPending = false;
-function refit(){ if(refitPending) return; refitPending = true; requestAnimationFrame(()=>{ refitPending = false; fitNote(); }); }
+/* se ajusta en el acto (nunca se pinta un cuadro con algo afuera) y otra vez al cuadro siguiente, por si cambió una letra */
+function refit(){ fitNote(); if(refitPending) return; refitPending = true; requestAnimationFrame(()=>{ refitPending = false; fitNote(); }); }
 addEventListener('resize', refit);
 if(document.fonts && document.fonts.ready) document.fonts.ready.then(refit);
 
@@ -1342,7 +1343,7 @@ function finishStation(){
   const last = state.i === STATIONS.length-1;
   const nx = STATIONS[state.i+1];
   $('next').innerHTML = (last ? '¡Al duelo final!' : nx && nx.gold ? 'Parada dorada' : 'Seguir') + ' <kbd>Enter</kbd>';
-  refit();
+  fitNote();
   bindNext('next', () => goTo(state.i+1));
 }
 
@@ -1442,7 +1443,7 @@ async function duelEnd(winner, early, t, culprit){
   award(winner, pts); sfx('steal');
   if($('chain')) for(const li of [...$('chain').children]){ li.classList.add('on'); if(!li.classList.contains('ar')) tone(660,0,.08,'triangle',.08); await wait(380); }
   const rel = $('rel'); rel.hidden = false; rel.innerHTML = relate(swing(winner, before));
-  $('endrow').hidden = false; refit();
+  $('endrow').hidden = false; fitNote();
   bindNext('end', champions);
 }
 
