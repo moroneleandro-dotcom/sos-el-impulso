@@ -4,9 +4,9 @@
 **Sí: la presentación puede ser espectacular, con una condición: que el grupo la ensaye una vez en la sala real.**
 El juego cumplió la rúbrica con todo en 9 o más en **tres rondas seguidas** (3, 4 y 5), en 7 resoluciones distintas (incluidos el proyector 4:3 y el escalado de Windows al 125 % y 150 %), con 56 partidas grabadas por ronda y sin un solo error. Lo que este ensayo no puede medir —el sonido en los parlantes de la escuela, el proyector real y la energía de la sala— depende del grupo, y está en la lista de abajo.
 
-**Última versión estable: v3** (commit `879b6cb`), publicada en https://moroneleandro-dotcom.github.io/sos-el-impulso/ — es la que abre el link de Canva.
+**Última versión estable: v4** (ver `NOTAS.md` para el commit), publicada en https://moroneleandro-dotcom.github.io/sos-el-impulso/ — es la que abre el link de Canva.
 
-## Puntajes finales (ronda 5)
+## Puntajes finales (rondas 5 y 6)
 | Criterio | Puntaje |
 |---|---|
 | Se entiende en 10 s | 9 |
@@ -24,7 +24,7 @@ El juego cumplió la rúbrica con todo en 9 o más en **tres rondas seguidas** (
 | Fácil para un alumno nervioso | 9 |
 | Hecho con cariño, a mano | 9 |
 
-Evolución del mínimo: ronda 1 → 7 · ronda 2 → 8 · ronda 3 → 9 · ronda 4 → 9 · ronda 5 → 9.
+Evolución del mínimo: ronda 1 → 7 · ronda 2 → 8 · ronda 3 → 9 · ronda 4 → 9 · ronda 5 → 9 · ronda 6 → 9.
 
 ## Qué se mejoró
 - **Justicia:** 6 paradas, 3 para cada equipo (2 normales + 1 dorada). Antes: 4 contra 3, y la parada doble era de un solo equipo.
@@ -40,12 +40,12 @@ Evolución del mínimo: ronda 1 → 7 · ronda 2 → 8 · ronda 3 → 9 · ronda
 
 ## Qué no se pudo
 - **Abrir la URL pública desde acá:** la red de este entorno no deja entrar a github.io. Se verificó de otra forma: el despliegue de GitHub Pages terminó bien y los archivos exactos de `main` pasaron un ensayo completo. Conviene abrir el link una vez desde la compu de la escuela.
-- **Etiquetas `v2-estable` y `v3-estable`:** están creadas, pero este entorno no permite subir etiquetas. Las versiones son: v2 = commit `2d32992`, v3 = commit `879b6cb`. Para subirlas desde otra compu: `git push origin v2-estable v3-estable` (o crearlas en GitHub, en Releases).
+- **Etiquetas `v2-estable`, `v3-estable` y `v4-estable`:** están creadas, pero este entorno no permite subir etiquetas. Los commits de cada versión están en `NOTAS.md`. Para crearlas: en GitHub, Releases → "Draft a new release", o desde una compu con el repositorio, `git tag v4-estable <commit>` y `git push origin --tags`.
 - **Firefox:** no hay Firefox en este entorno. Se probó en Chromium (el motor de Chrome y Edge) y se revisó el código para Firefox (todo lo usado es estándar). Si la escuela usa Firefox, abrirlo antes una vez.
 - **Escuchar la música:** se midió (volúmenes, que los efectos se oigan sobre la música, que nada sature), pero nadie la escuchó con oídos humanos.
 
 ## Qué tiene que ensayar el grupo antes de presentar
-1. **Una pasada completa en la sala**, con el proyector y los parlantes reales, en modo ensayo (tecla **E** en la portada) y después **R** para volver a la portada.
+1. **Una pasada completa en la sala**, con el proyector y los parlantes reales, en modo ensayo (tecla **E** en la portada) y después **R** + Enter: vuelve a la portada y apaga el modo ensayo (arriba no tiene que decir "MODO ENSAYO").
 2. **Volumen:** ajustar la compu para que la música se oiga suave y los efectos bien. Si molesta, **M** la apaga.
 3. **Mirar desde la última fila** que se lean los nombres y el tanteador.
 4. **Quién lee cada parada** (Franco, Facundo, Valentino, Felipe, Mateo y todos juntos) y quién maneja (en el guion, Mateo).
