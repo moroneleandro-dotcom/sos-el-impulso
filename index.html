@@ -173,6 +173,8 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
 .opt.right{border-color:var(--ok);color:var(--ok);background:var(--hl2);animation:none;transform:scale(1.03) rotate(-.6deg)}
 .opt:disabled{cursor:default}
 .opt.dim{opacity:.45}
+.answered .opt{font-size:1.08em;padding-top:.25em;padding-bottom:.25em}
+@media (max-aspect-ratio:3/2){.ribbon .em{display:none}.ribbon .nm{font-size:2.35em}}
 
 .fb{font-size:1.06em;line-height:1.32;display:flex;flex-direction:column;gap:.3em}
 .fb:empty{display:none}
@@ -312,6 +314,10 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
 .flash.moment{background:var(--patL);color:#fff}
 .flash.moment p{color:#fff;font-size:clamp(1.8rem,4.6vw,4rem)}
 .flash.moment .word{color:#fff;-webkit-text-stroke:3px var(--pencil);paint-order:stroke fill;font-size:clamp(4rem,12vw,11rem);animation:pop .5s cubic-bezier(.3,1.8,.5,1) both}
+.flash.goldf{background:radial-gradient(circle,#fff8c4 0 35%,#ffd54a 100%)}
+.flash.goldf p{color:var(--goldT)}
+.flash.goldf p.who{color:var(--pencil);font-size:clamp(1.4rem,3.4vw,3rem)}
+.flash.goldf .word{font-size:clamp(4rem,11vw,10rem);color:var(--red);-webkit-text-stroke:3px var(--pencil);paint-order:stroke fill;animation:pop .5s cubic-bezier(.3,1.8,.5,1) both}
 .flash.count .word{font-family:var(--f-body);font-weight:700;font-size:clamp(8rem,30vh,22rem);animation:pop .4s cubic-bezier(.3,1.8,.5,1) both}
 .ov{position:fixed;inset:0;z-index:50;display:grid;place-items:center;background:rgba(251,252,254,.93);padding:16px}
 .ov .card{background:#fff;border:3px solid var(--pencil);border-radius:14px 26px 12px 22px;padding:1rem 1.4rem;max-width:min(92vw,46rem);max-height:92vh;overflow:auto;box-shadow:6px 7px 0 rgba(0,0,0,.08);display:flex;flex-direction:column;gap:.6rem;box-sizing:border-box}
@@ -1018,6 +1024,13 @@ function pointsLeft(){
   if(!state.duelDone) n += DUEL_PTS;
   return n;
 }
+function swing(team, before){
+  const o = 1-team, b = before[team]-before[o], a = state.score[team]-state.score[o];
+  if(b < 0 && a > 0) return '¡Lo dieron vuelta!';
+  if(b < 0 && a === 0) return '¡Lo empataron!';
+  if(b < 0) return '¡Se acercan!';
+  return '';
+}
 function relate(extra){
   const [a,b] = state.score, d = Math.abs(a-b), lead = a>b?0:1;
   let s = d===0 ? '¡Empate '+a+' a '+b+'!' : d===1 ? 'Ventaja mínima para '+nm(lead)+'.' : 'Ventaja de '+d+' para '+nm(lead)+'.';
@@ -1221,10 +1234,16 @@ function goTo(i){
     '<p class="relator" id="rel" hidden></p>' +
     '<div class="row" id="nextrow" hidden><span></span><button class="go" id="next" type="button">Seguir <kbd>Enter</kbd></button></div>',
     s.gold ? 'gold' : '');
-  if(s.gold) sfx('gold'); else sfx('whoosh');
   note.querySelectorAll('.opt').forEach(b => b.onclick = () => choose(+b.dataset.k));
-  bindNext('reveal', reveal);
-  if(s.pre) s.pre();
+  if(s.gold) goldIntro(s); else { sfx('whoosh'); bindNext('reveal', reveal); if(s.pre) s.pre(); }
+}
+async function goldIntro(s){
+  const fl = $('flash');
+  fl.className = 'flash goldf'; fl.innerHTML = '<p>★ Parada dorada ★</p><div class="word">¡VALE DOBLE!</div><p class="who">para '+nm(state.turn)+'</p>'; fl.hidden = false;
+  sfx('gold'); later(()=>sfx('gold'), 450);
+  await wait(2200);
+  fl.hidden = true; screenAt = performance.now();
+  bindNext('reveal', reveal); if(s.pre) s.pre();
 }
 function reveal(){
   if(phase!=='read') return;
@@ -1261,8 +1280,9 @@ async function choose(k){
     fb.className = 'fb good';
     fb.innerHTML = '<span class="tag">'+CHECK+(stolen ? '¡Robo! <span class="n">+'+pts+'</span> para '+nm(team) : '¡Correcto! <span class="n">+'+pts+'</span> para '+nm(team))+'</span><span class="why">'+o.msg+'</span>';
     sfx(stolen ? 'steal' : 'ding');
+    const before = state.score.slice();
     award(team, pts);
-    const rel = $('rel'); rel.hidden = false; rel.innerHTML = relate('');
+    const rel = $('rel'); rel.hidden = false; rel.innerHTML = relate(swing(team, before));
     refit();
     await s.run(fb);
     finishStation();
@@ -1416,9 +1436,10 @@ async function duelEnd(winner, early, t, culprit){
     '</ul>') +
     '<p class="relator" id="rel" hidden></p>' +
     '<div class="row" id="endrow" hidden><span></span><button class="go" id="end" type="button">¿Quién ganó? <kbd>Enter</kbd></button></div>');
+  const before = state.score.slice();
   award(winner, pts); sfx('steal');
   if($('chain')) for(const li of [...$('chain').children]){ li.classList.add('on'); if(!li.classList.contains('ar')) tone(660,0,.08,'triangle',.08); await wait(380); }
-  const rel = $('rel'); rel.hidden = false; rel.innerHTML = relate('');
+  const rel = $('rel'); rel.hidden = false; rel.innerHTML = relate(swing(winner, before));
   $('endrow').hidden = false; refit();
   bindNext('end', champions);
 }

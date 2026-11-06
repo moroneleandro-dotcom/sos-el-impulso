@@ -178,6 +178,8 @@ async function setup(H, {cry=2, names=null}={}){
 async function station(H, i, plan, {shoot=true, pauses=null}={}){
   const P = pauses || {};
   await H.waitPhase('read');
+  if(i>=4 && shoot){ await H.sleep(500); await H.shot('parada'+(i+1)+'-dorada'); }
+  await H.page.waitForSelector('#flash', {state:'hidden', timeout:15000});
   if(shoot) await H.shot('parada'+(i+1));
   if(P.read) await H.sleep(P.read);
   await H.enter(); await H.waitPhase('answer');
@@ -260,7 +262,7 @@ const SCENARIOS = [
     await p.keyboard.press('Control+A'); await p.keyboard.type('Mamá Hurra Pura'); await H.shot('nombre-con-letras-de-comando');
     if(await H.phase()!=='teams') throw new Error('escribir un nombre disparó un comando');
     await p.keyboard.press('Enter'); await p.keyboard.press('Enter');
-    await H.waitPhase('cry'); await p.dblclick('#count'); await H.waitPhase('cry-pick', 15000);
+    await H.waitPhase('cry'); await H.sleep(500); await p.dblclick('#count'); await H.waitPhase('cry-pick', 15000);
     await p.keyboard.press('7'); await p.keyboard.press('2'); await p.keyboard.press('1'); // tecla de más: solo vale la primera
     await H.waitPhase('rules', 10000);
     const s0 = await H.st(); if(s0.score.join()!=='0,1') throw new Error('el grito sumó mal: '+s0.score);
@@ -268,7 +270,7 @@ const SCENARIOS = [
     await H.key('h'); await H.shot('ayuda'); await H.key('Escape');
     await H.enter(); await H.waitPhase('read');
     // doble Enter en la parada: prende la mecha una sola vez
-    await p.keyboard.press('Enter'); await p.keyboard.press('Enter'); await H.waitPhase('answer');
+    await H.sleep(500); await p.keyboard.press('Enter'); await p.keyboard.press('Enter'); await H.waitPhase('answer');
     // pausa general: la mecha no avanza
     await H.key('Space'); await H.shot('pausa');
     const a = await p.locator('#sec').textContent(); await H.sleep(2500); const b = await p.locator('#sec').textContent();
@@ -283,8 +285,9 @@ const SCENARIOS = [
     await H.waitPhase('read'); await H.sleep(500);
     const s1 = await H.st(); if(s1.score.join()!=='0,1' || s1.stealing) throw new Error('repetir parada no volvió atrás: '+s1.score);
     await H.enter(); await H.waitPhase('answer'); await H.key(String(CORRECT[0]+1)); await H.untilDone();
+    await H.sleep(400);
     // doble clic en Seguir: avanza una sola parada
-    await p.dblclick('#next'); await H.sleep(800);
+    await p.dblclick('#next'); await H.sleep(800); await H.waitPhase('read');
     if((await H.st()).i!==1) throw new Error('el doble clic salteó una parada');
     // deshacer el último punto
     const before = (await H.st()).score.slice(); await H.key('u'); const after = (await H.st()).score;
