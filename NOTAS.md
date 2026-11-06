@@ -25,6 +25,7 @@ Cada equipo tiene color, patrón (rayas rojas / lunares azules, para que tambié
 Música original sintetizada con 4 climas: tranquila (portada, equipos, lectura), tensa (mecha y duelo), festiva (campeones y diploma) y emotiva (cierre). Baja sola durante el suspenso.
 
 ## Controles del que maneja
+Desde un iPad (o cualquier pantalla táctil): todo se toca; pausa, deshacer, repetir, pantalla completa y reiniciar están en el botón **menú** (arriba a la derecha). En el duelo, cada Cerebro toca su mitad de la pantalla. Sacar el modo silencio del iPad para que suene.
 Enter seguir (y prender la mecha) · 1 2 3 respuesta · Espacio pausa general · U deshacer el último punto · Retroceso repetir la parada · A y L en el duelo · M música (y + − volumen) · S efectos · F pantalla completa · H ayuda · R reiniciar (pregunta antes) · E en la portada: modo ensayo.
 Si se recarga la página en medio de la partida, la portada ofrece "Seguir la partida" (dura 20 minutos).
 Guía imprimible de una hoja: `guia.html`.
@@ -38,7 +39,8 @@ Guía imprimible de una hoja: `guia.html`.
 - **Última versión estable: v4** (etiqueta `v4-estable`, commit `5329089`), publicada en `main`, que es lo que abre el link de Canva. Antes: v3 (`v3-estable`, `befc303`), v2 (`v2-estable`, `a49fb2f`) y v1 (`v1-estable`, `e085cfd`).
 - Para volver a una versión: `git checkout v4-estable -- index.html guia.html fonts` y subir el cambio a `main`.
 - Qué cambió: equipos con nombre, emblema y patrón; turnos justos (3 y 3); 6 paradas con dos doradas, una por equipo; duelo de Cerebros con desempate; diploma con las 4 ideas; música en 4 climas; letra muy legible; herramientas para el que maneja; guía imprimible.
-- Calidad: 6 rondas de ensayo automatizado (56 partidas cada una, 7 resoluciones). Las rondas 3, 4, 5 y 6 cumplieron la rúbrica con todo en 9 o más. Detalle en `ensayo/ronda-*.md` y `ensayo/informe-final.md`.
+- Calidad: 7 rondas de ensayo automatizado (56 a 79 partidas cada una, hasta 9 configuraciones, incluido iPad). Las rondas 3 a 7 cumplieron la rúbrica con todo en 9 o más.
+- **v5:** se puede manejar desde un iPad (menú táctil). Ver `ensayo/ronda-7.md`. Detalle en `ensayo/ronda-*.md` y `ensayo/informe-final.md`.
 - **Revisar antes de presentar:** una pasada en la sala real con proyector y parlantes (modo ensayo con E; después R + Enter, que lo apaga), volumen, que se lea desde la última fila, quién lee cada parada, imprimir `guia.html`. Si la escuela usa Firefox, abrir el juego una vez antes (no se pudo probar en Firefox).
 
 ## Plan de trabajo ampliado

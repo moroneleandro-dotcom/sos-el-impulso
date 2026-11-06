@@ -330,7 +330,7 @@ SCENARIOS.push({name:'tactil', desc:'Todo con toques, sin teclado', run: async H
   const p = H.page, tap = async (sel, ms=700) => { await p.locator(sel).first().tap({force:true}); await H.sleep(ms); };
   await H.shot('portada');
   await tap('#start'); await H.waitPhase('teams'); await tap('#ot0', 300); await tap('#ready', 800);
-  await H.waitPhase('cry'); await tap('#count'); await H.waitPhase('cry-pick', 15000); await tap('#pk0', 300);
+  await H.waitPhase('cry'); await tap('#count'); await H.waitPhase('cry-pick', 15000); await H.sleep(600); await tap('#pk0', 300);
   await H.waitPhase('rules', 10000); await H.shot('reglas'); await tap('#play');
   for(let i=0;i<6;i++){
     await H.waitPhase('read'); await p.waitForSelector('#flash', {state:'hidden', timeout:15000}); await H.sleep(450);

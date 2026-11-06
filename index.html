@@ -956,7 +956,9 @@ let refitPending = false;
 /* se ajusta en el acto (nunca se pinta un cuadro con algo afuera) y otra vez al cuadro siguiente, por si cambió una letra */
 function refit(){ fitNote(); if(refitPending) return; refitPending = true; requestAnimationFrame(()=>{ refitPending = false; fitNote(); }); }
 addEventListener('resize', refit);
-if(document.fonts && document.fonts.ready) document.fonts.ready.then(refit);
+/* las letras pueden llegar tarde (wifi lento): cada vez que termina de cargar una, se reajusta */
+if(document.fonts){ if(document.fonts.ready) document.fonts.ready.then(refit); if(document.fonts.addEventListener) document.fonts.addEventListener('loadingdone', refit); }
+addEventListener('load', refit);
 
 /* ===== la chispa que viaja ===== */
 function seg(id, color){
