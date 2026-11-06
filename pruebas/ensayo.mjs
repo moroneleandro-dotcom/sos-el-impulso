@@ -168,9 +168,15 @@ async function rehearse(browser, base, scenario, cfgName, opts={}){
 /* ---------- acciones de juego ---------- */
 async function setup(H, {cry=2, names=null}={}){
   await H.shot('portada');
-  await H.enter(); await H.waitPhase('teams'); await H.shot('equipos');
-  if(names){ await H.page.keyboard.press('Control+A'); await H.page.keyboard.type(names[0]); await H.page.keyboard.press('Enter'); await H.page.keyboard.press('Control+A'); await H.page.keyboard.type(names[1]); await H.shot('equipos-escritos'); await H.page.keyboard.press('Enter'); }
-  else { await H.enter(); await H.page.keyboard.press('Enter'); }
+  await H.enter(); await H.waitPhase('teams'); await H.shot('equipo-1');
+  // una pantalla por equipo: dice qué sistema son y pide el nombre
+  for(const t of [0,1]){
+    if(t===1){ await H.waitSel('#in1', 10000); await H.shot('equipo-2'); }
+    if(names){ await H.page.keyboard.press('Control+A'); await H.page.keyboard.type(names[t]); if(t===1) await H.shot('equipos-escritos'); }
+    await H.enter();
+  }
+  await H.waitPhase('lineup'); await H.shot('asi-quedan');
+  await H.enter();
   await H.waitPhase('cry'); await H.shot('grito');
   await H.enter(); await H.waitPhase('cry-pick', 15000); await H.shot('grito-quien');
   await H.key(String(cry+1)); await H.waitPhase('rules', 10000); await H.shot('reglas');
@@ -199,14 +205,31 @@ async function station(H, i, plan, {shoot=true, pauses=null}={}){
   if(P.after) await H.sleep(P.after);
   await H.enter();
 }
+/* Duelo a mano alzada: el que maneja marca con 1 (izquierda) o 2 (derecha) qué Cerebro levantó primero; 3 repite el rayo. */
+const ASK_FIRST = '#note .ask:has-text("primero")';
+async function rayo(H, team, {shoot=false}={}){
+  await H.waitSel(ASK_FIRST, 30000); if(shoot) await H.shot('duelo-quien');
+  await H.key(String(team+1)); await H.waitPhase('duel-round');
+}
 async function duel(H, how, {shoot=true}={}){
   await H.waitPhase('duel-intro'); if(shoot) await H.shot('duelo');
   await H.enter(); await H.waitPhase('duel');
-  if(how==='early'){ await H.sleep(500); await H.key('a'); }
-  else if(how==='trap'){ await H.waitSel('.flash:not(.real):not([hidden]) p', 15000); if(shoot) await H.shot('duelo-trampa'); await H.key('l'); }
-  else if(how==='none'){ await H.waitSel('.flash.real:not([hidden])', 20000); if(shoot) await H.shot('duelo-rayo'); await H.waitPhase('duel-done', 15000); if(shoot) await H.shot('duelo-nadie'); await H.enter(); await H.waitPhase('duel'); await H.waitSel('.flash.real:not([hidden])', 20000); await H.sleep(250); await H.key('a'); }
-  else { await H.waitSel('.flash.real:not([hidden])', 20000); if(shoot) await H.shot('duelo-rayo'); await H.sleep(300); await H.key(how==='A'?'a':'l'); }
-  await H.waitPhase('duel-done');
+  const need = (await H.st()).tiebreak ? 1 : 2;
+  let win = 0;
+  if(how==='early'){ await H.sleep(500); await H.key('1'); await H.waitPhase('duel-round'); if(shoot) await H.shot('duelo-adelantado'); win = 1; }
+  else if(how==='trap'){
+    const seen = await Promise.race([
+      H.waitSel('.flash:not(.real):not([hidden]) p', 30000).then(()=>'trampa').catch(()=>null),
+      H.waitSel(ASK_FIRST, 30000).then(()=>'pregunta').catch(()=>null)]);
+    if(seen==='trampa'){ if(shoot) await H.shot('duelo-trampa'); await H.key('2'); await H.waitPhase('duel-round'); }
+    else { await H.key('1'); await H.waitPhase('duel-round'); }
+    win = 0;
+  }
+  else if(how==='none'){ await H.waitSel(ASK_FIRST, 30000); if(shoot) await H.shot('duelo-pregunta'); await H.key('3'); await H.sleep(300); await rayo(H, 0); win = 0; }
+  else { win = how==='A' ? 0 : 1; await rayo(H, win, {shoot}); }
+  for(let r=1; r<need; r++){ await H.enter(); await H.waitPhase('duel'); await rayo(H, win); }
+  if(shoot) await H.shot('duelo-ronda');
+  await H.enter(); await H.waitPhase('duel-done');
   await H.waitSel('#endrow:not([hidden])', 15000); if(shoot) await H.shot('duelo-resultado');
 }
 async function ending(H, {shoot=true, pauses=null}={}){
@@ -263,7 +286,7 @@ const SCENARIOS = [
     // en el campo de nombre, las letras de comandos (H, M, P, A, L, R, U) se escriben y no hacen nada raro
     await p.keyboard.press('Control+A'); await p.keyboard.type('Mamá Hurra Pura'); await H.shot('nombre-con-letras-de-comando');
     if(await H.phase()!=='teams') throw new Error('escribir un nombre disparó un comando');
-    await p.keyboard.press('Enter'); await p.keyboard.press('Enter');
+    await H.enter(); await H.waitSel('#in1', 10000); await H.enter(); await H.waitPhase('lineup'); await H.enter();
     await H.waitPhase('cry'); await H.sleep(500); await p.dblclick('#count'); await H.waitPhase('cry-pick', 15000);
     await p.keyboard.press('7'); await p.keyboard.press('2'); await p.keyboard.press('1'); // tecla de más: solo vale la primera
     await H.waitPhase('rules', 10000);
@@ -369,13 +392,12 @@ async function timing(browser, base){
     const T = {}; const mark = k => T[k] = (Date.now()-start)/1000; const start = Date.now();
     await H.sleep(5000); // presentan la portada
     await H.enter(); await H.waitPhase('teams'); await H.sleep(30000); // la sala elige nombres y Cerebros
-    await H.page.keyboard.press('Enter'); await H.page.keyboard.press('Enter'); mark('equipos');
+    await H.enter(); await H.waitSel('#in1', 10000); await H.sleep(15000); await H.enter(); await H.waitPhase('lineup'); await H.sleep(8000); await H.enter(); mark('equipos');
     await H.waitPhase('cry'); await H.sleep(6000); await H.enter(); await H.waitPhase('cry-pick', 15000); await H.sleep(3000); await H.key('1'); mark('grito');
     await H.waitPhase('rules', 10000); await H.sleep(15000); await H.enter(); mark('reglas');
     const plans = ['ok','steal','ok','ok','steal','ok'];
     for(let i=0;i<6;i++){ await station(H, i, plans[i], {shoot:false, pauses:HUMAN}); mark('parada'+(i+1)); }
-    await H.waitPhase('duel-intro'); await H.sleep(10000); await H.enter(); await H.waitPhase('duel'); await H.waitSel('.flash.real:not([hidden])', 20000); await H.sleep(400); await H.key('a');
-    await H.waitSel('#endrow:not([hidden])', 15000); await H.sleep(4000); mark('duelo');
+    await H.waitPhase('duel-intro'); await H.sleep(10000); await duel(H, 'A', {shoot:false}); await H.sleep(4000); mark('duelo');
     await ending(H, {shoot:false, pauses:HUMAN}); mark('cierre');
     H.page.__T = T;
     fs.writeFileSync(path.join(OUT,'tiempo.json'), JSON.stringify(T, null, 2));

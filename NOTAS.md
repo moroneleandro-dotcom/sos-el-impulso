@@ -18,15 +18,15 @@ Juego que un grupo de alumnos (Franco, Facundo, Valentino, Felipe y Mateo) muest
 5. La dirección pública no cambia: https://moroneleandro-dotcom.github.io/sos-el-impulso/ (está linkeada desde Canva).
 
 ## Estructura actual del juego (versión 2)
-Portada → **equipos** (cada lado elige su nombre: hay sugeridos sacados de la presentación, se escriben en el campo o se cambian con ↓; cada equipo elige su **Cerebro**, el que dice la respuesta) → **grito de guerra** (cuenta 3-2-1, primer punto; empate = un punto para cada uno) → **reglas** en una pantalla → **6 paradas, 3 para cada equipo** (arrancan los Parasimpáticos; las dos últimas son **doradas** y valen doble, una para cada equipo, anunciadas con un cartel) con mecha de 15 s, redoble, robo de punto (10 s) y el relator que dice cuántos puntos quedan → **duelo de Cerebros** (A y L, con trampas; vale 2; si hay empate, desempate que vale 1) → **campeones** con aplauso para los dos equipos → **diploma** con las 4 ideas de la presentación (para la foto) → **una última señal** con las firmas.
+Portada → **equipos, uno por pantalla** (a cada lado de la sala el juego le dice qué sistema es y qué hace, según la página 6: Simpáticos = preparan el cuerpo para el peligro; Parasimpáticos = el cuerpo en reposo; después cada lado escribe su nombre o toca uno sugerido) → **así quedan los equipos** (cada equipo elige su **Cerebro**, el que dice la respuesta y juega el duelo) → **grito de guerra** (cuenta 3-2-1, primer punto; empate = un punto para cada uno) → **reglas** en una pantalla → **6 paradas, 3 para cada equipo** (arrancan los Parasimpáticos; las dos últimas son **doradas** y valen doble, una para cada equipo, anunciadas con un cartel) con mecha de 15 s, redoble, robo de punto (10 s) y el relator que dice cuántos puntos quedan → **duelo de Cerebros a mano alzada** (al mejor de 3 rayos, con trampas: gana el primero que levanta la mano y grita el nombre de su equipo; el que maneja es el árbitro y marca 1 izquierda / 2 derecha, 3 repite el rayo; vale 2; si hay empate, desempate a un rayo que vale 1) → **campeones** con aplauso para los dos equipos → **diploma** con las 4 ideas de la presentación (para la foto) → **una última señal** con las firmas.
 
 Cada equipo tiene color, patrón (rayas rojas / lunares azules, para que también lo distingan las personas daltónicas), emblema (rayo / luna) y flecha hacia su lado de la sala.
 
 Música original sintetizada con 4 climas: tranquila (portada, equipos, lectura), tensa (mecha y duelo), festiva (campeones y diploma) y emotiva (cierre). Baja sola durante el suspenso.
 
 ## Controles del que maneja
-Desde un iPad (o cualquier pantalla táctil): todo se toca; pausa, deshacer, repetir, pantalla completa y reiniciar están en el botón **menú** (arriba a la derecha). En el duelo, cada Cerebro toca su mitad de la pantalla. Sacar el modo silencio del iPad para que suene.
-Enter seguir (y prender la mecha) · 1 2 3 respuesta · Espacio pausa general · U deshacer el último punto · Retroceso repetir la parada · A y L en el duelo · M música (y + − volumen) · S efectos · F pantalla completa · H ayuda · R reiniciar (pregunta antes) · E en la portada: modo ensayo.
+Desde un iPad (o cualquier pantalla táctil): todo se toca; pausa, deshacer, repetir, pantalla completa y reiniciar están en el botón **menú** (arriba a la derecha). En el duelo, el que maneja toca el nombre del Cerebro que levantó la mano primero (o su mitad del rayo). Sacar el modo silencio del iPad para que suene.
+Enter seguir (y prender la mecha) · 1 2 3 respuesta · Espacio pausa general · U deshacer el último punto · Retroceso repetir la parada · en el duelo 1 / 2 quién levantó primero y 3 repetir el rayo · M música (y + − volumen) · S efectos · F pantalla completa · H ayuda · R reiniciar (pregunta antes) · E en la portada: modo ensayo.
 Si se recarga la página en medio de la partida, la portada ofrece "Seguir la partida" (dura 20 minutos).
 Guía imprimible de una hoja: `guia.html`.
 
@@ -45,3 +45,8 @@ Guía imprimible de una hoja: `guia.html`.
 
 ## Plan de trabajo ampliado
 Antes de seguir, leé y cumplí `PLAN-NOCHE.md`: define qué es una presentación espectacular, cómo ensayarla y cuándo se puede dar por terminada.
+
+## Versión 5
+- Equipos en dos pasos: cada lado ve qué sistema es (con la definición de la página 6) y elige su nombre; nombres sugeridos para tocar; pantalla "Así quedan los equipos".
+- El duelo final ya no usa teclas de los jugadores: los Cerebros levantan la mano y el que maneja arbitra con 1 / 2 (3 repite el rayo). Al mejor de 3, con trampas. También se puede hacer clic en la mitad del rayo que corresponde.
+- Guía impresa y prueba automática actualizadas al nuevo flujo.
