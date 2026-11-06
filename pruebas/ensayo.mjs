@@ -379,12 +379,12 @@ SCENARIOS.push({name:'tactil', desc:'Todo con toques, sin teclado', run: async H
   // el que maneja arbitra tocando: un rayo con la mitad del cartel, el otro con el botón del nombre
   await H.waitPhase('duel'); await p.waitForSelector('.flash.real:not([hidden])', {timeout:20000}); await H.sleep(250);
   await p.touchscreen.tap(Math.round(H.page.viewportSize().width*0.8), 300);
-  await H.waitPhase('duel-round'); await tap('#next'); await H.waitPhase('duel');
+  await H.waitPhase('duel-round'); await H.sleep(450); await tap('#next'); await H.waitPhase('duel');
   await H.waitSel(ASK_FIRST, 30000); await tap('#j1');
-  await H.waitPhase('duel-round'); await tap('#next');
+  await H.waitPhase('duel-round'); await H.sleep(450); await tap('#next');
   await H.waitPhase('duel-done'); await H.waitSel('#endrow:not([hidden])', 15000); await H.shot('duelo-resultado');
   await tap('#end'); await H.waitPhase(['champ','duel-intro'], 10000);
-  if(await H.phase()==='duel-intro'){ await tap('#ready', 300); await H.waitSel(ASK_FIRST, 30000); await tap('#j0'); await H.waitPhase('duel-round'); await tap('#next'); await H.waitSel('#endrow:not([hidden])', 15000); await tap('#end'); }
+  if(await H.phase()==='duel-intro'){ await tap('#ready', 300); await H.waitSel(ASK_FIRST, 30000); await tap('#j0'); await H.waitPhase('duel-round'); await H.sleep(450); await tap('#next'); await H.waitSel('#endrow:not([hidden])', 15000); await tap('#end'); }
   await H.waitPhase('champ'); await H.sleep(2600); await H.shot('campeones');
   await tap('#dip'); await H.waitPhase('diploma'); await H.sleep(4200); await H.shot('diploma');
   await tap('#last'); await H.waitPhase('bye'); await H.sleep(13000); await H.shot('cierre');
