@@ -35,11 +35,11 @@ Guía imprimible de una hoja: `guia.html`.
 - `pruebas/ensayo.mjs`: ensayo automatizado (8 escenarios × 7 resoluciones, con video). `node pruebas/ensayo.mjs` y después `node pruebas/resumen.mjs`.
 
 ## Resumen de la noche del 5 al 6 de noviembre
-- **Última versión estable: v3** (commit `879b6cb`), publicada en `main`, que es lo que abre el link de Canva. Antes: v2 (`2d32992`) y v1 (`e085cfd`).
-- Las etiquetas `v2-estable` y `v3-estable` quedaron creadas pero no se pudieron subir desde el entorno de trabajo: subirlas con `git push origin v2-estable v3-estable` o crearlas en GitHub.
+- **Última versión estable: v4** (commit `42cffd1`), publicada en `main`, que es lo que abre el link de Canva. Antes: v3 (`879b6cb`), v2 (`2d32992`) y v1 (`e085cfd`).
+- Las etiquetas `v2-estable`, `v3-estable` y `v4-estable` no se pudieron subir desde el entorno de trabajo (no permite subir etiquetas). Crearlas en GitHub (Releases → "Draft a new release", eligiendo cada commit) o con `git tag v4-estable 42cffd1 && git push origin --tags`.
 - Qué cambió: equipos con nombre, emblema y patrón; turnos justos (3 y 3); 6 paradas con dos doradas, una por equipo; duelo de Cerebros con desempate; diploma con las 4 ideas; música en 4 climas; letra muy legible; herramientas para el que maneja; guía imprimible.
-- Calidad: 5 rondas de ensayo automatizado (56 partidas cada una, 7 resoluciones). Las rondas 3, 4 y 5 cumplieron la rúbrica con todo en 9 o más. Detalle en `ensayo/ronda-*.md` y `ensayo/informe-final.md`.
-- **Revisar antes de presentar:** una pasada en la sala real con proyector y parlantes (modo ensayo con E), volumen, que se lea desde la última fila, quién lee cada parada, imprimir `guia.html`. Si la escuela usa Firefox, abrir el juego una vez antes (no se pudo probar en Firefox).
+- Calidad: 6 rondas de ensayo automatizado (56 partidas cada una, 7 resoluciones). Las rondas 3, 4, 5 y 6 cumplieron la rúbrica con todo en 9 o más. Detalle en `ensayo/ronda-*.md` y `ensayo/informe-final.md`.
+- **Revisar antes de presentar:** una pasada en la sala real con proyector y parlantes (modo ensayo con E; después R + Enter, que lo apaga), volumen, que se lea desde la última fila, quién lee cada parada, imprimir `guia.html`. Si la escuela usa Firefox, abrir el juego una vez antes (no se pudo probar en Firefox).
 
 ## Plan de trabajo ampliado
 Antes de seguir, leé y cumplí `PLAN-NOCHE.md`: define qué es una presentación espectacular, cómo ensayarla y cuándo se puede dar por terminada.
