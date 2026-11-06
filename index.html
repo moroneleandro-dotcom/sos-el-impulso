@@ -235,8 +235,6 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
 .sys-head small{display:block;font-weight:700;color:var(--pencil);font-size:.85em}
 .sys-name{font-family:var(--f-marker);font-size:2.3em;line-height:1}
 .sys-what{margin:0;color:var(--pencil);font-size:1.1em;line-height:1.3}
-.sys-cry{margin:0;color:var(--pencil);font-size:.95em}
-.sys-cry b{font-family:var(--f-marker);font-weight:400;background:var(--hl);padding:0 .25em}
 .ask-name{font-weight:700;font-size:1.25em;color:var(--pencil)}
 .team-in{font-family:var(--f-marker);font-size:1.6em;background:#fff;border:3px solid currentColor;border-radius:10px 16px 8px 14px;padding:.15em .4em;width:100%;box-sizing:border-box;min-width:0}
 .team-in.L{color:var(--red)} .team-in.R{color:var(--blue)}
@@ -265,14 +263,6 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
 .brainy{display:flex;align-items:center;gap:.6em;font-size:1.05em;margin:0}
 .brainy svg{width:2.4em;height:2.4em;flex:none}
 
-/* grito */
-.cries{display:grid;grid-template-columns:1fr 1fr;gap:.8em}
-.cry{display:flex;flex-direction:column;gap:.3em;padding:.5em .6em;border:3px solid currentColor;min-width:0}
-.cry.L{color:var(--red);border-radius:14px 30px 12px 26px}
-.cry.R{color:var(--blue);border-radius:30px 14px 26px 12px;text-align:right}
-.cry .nm{font-family:var(--f-marker);font-size:1.1em;white-space:nowrap;overflow:hidden}
-.cry .shout{font-family:var(--f-marker);font-size:1.5em;line-height:1.1;background:var(--hl);color:var(--pencil);padding:.05em .3em;align-self:flex-start;transform:rotate(-2deg)}
-.cry.R .shout{align-self:flex-end;transform:rotate(2deg)}
 .picks{display:flex;flex-direction:column;gap:.45em}
 .pick{font-family:var(--f-marker);font-size:1.25em;background:#fff;border:3px solid currentColor;border-radius:var(--hand);padding:.25em .7em;cursor:pointer;display:flex;align-items:center;gap:.5em;text-align:left}
 .pick .k{font-family:var(--f-body);font-weight:700;flex:none;font-size:.7em;width:1.6em;height:1.6em;display:grid;place-items:center;border:2.5px solid currentColor;border-radius:50%}
@@ -613,10 +603,10 @@ const MENSAJE = [
 ];
 /* Los dos bandos son las dos partes del sistema autónomo. Los nombres sugeridos salen de la presentación. */
 const TEAMS = [
-  {side:'Simpáticos', s:'L', c:'#c62828', arrow:'←', key:'A', cry:'¡ATAQUE O HUIDA!',
+  {side:'Simpáticos', s:'L', c:'#c62828', arrow:'←', key:'A',
    what:'El sistema que <b>prepara el cuerpo para el peligro</b>: la reacción de ataque o huida.',
    sugg:['Las Médulas Veloces','Los Aferentes Furiosos','Los Eferentes Express','Los Lumbares Locos','Los Troncos Turbo','Los Cráneos Duros']},
-  {side:'Parasimpáticos', s:'R', c:'#1d3f9e', arrow:'→', key:'L', cry:'¡CUERPO EN REPOSO!',
+  {side:'Parasimpáticos', s:'R', c:'#1d3f9e', arrow:'→', key:'L',
    what:'El sistema que <b>controla el cuerpo cuando está en reposo</b>.',
    sugg:['Los Digestivos Felices','Los Cerebelos Zen','Los Diencéfalos Tranqui','Los Coccígeos Relajados','Las Vías Serenas','Los Sacros Pacíficos']}
 ];
@@ -1195,7 +1185,6 @@ function teamStep(t){
       '<div class="sys-head">'+EMB[t]+'<div><small>'+(t===0?'← ':'')+'Los de este lado de la sala son'+(t===1?' →':'')+'</small>' +
       '<div class="sys-name">'+T.side.toUpperCase()+'</div></div></div>' +
       '<p class="sys-what">'+T.what+'</p>' +
-      '<p class="sys-cry">Su grito: <b>'+T.cry+'</b></p>' +
     '</div>' +
     '<label class="ask-name" for="in'+t+'">¿Cómo se llama su equipo?</label>' +
     '<input class="team-in '+T.s+'" id="in'+t+'" maxlength="24" autocomplete="off" spellcheck="false" value="'+nm(t)+'">' +
@@ -1232,49 +1221,7 @@ function lineup(){
     '<div class="lineup">'+card(0)+'<span class="vsbig">VS</span>'+card(1)+'</div>' +
     '<p class="brainy">'+BRAIN+'<span>Cada equipo elige ahora su <b>Cerebro</b>: la persona que dice la respuesta final y que juega el duelo del final.</span></p>' +
     '<div class="row"><span></span><button class="go" id="ready" type="button">Ya eligieron <kbd>Enter</kbd></button></div>');
-  bindNext('ready', cry);
-}
-
-/* --- grito de guerra: primer punto --- */
-function cry(){
-  screen('cry'); drawScore();
-  const c = t => '<div class="cry '+TEAMS[t].s+'"><span class="nm fit">'+(t===0?'← ':'')+nm(t)+(t===1?' →':'')+'</span><span class="shout">'+TEAMS[t].cry+'</span></div>';
-  setNote(
-    '<div class="eyebrow"><span>Primer punto en juego</span></div>' +
-    '<p class="ask">Grito de guerra: a la cuenta de 3, cada lado grita el suyo.</p>' +
-    '<div class="cries">'+c(0)+c(1)+'</div>' +
-    '<div class="row"><span></span><button class="go" id="count" type="button">Cuenta regresiva <kbd>Enter</kbd></button></div>');
-  bindNext('count', countdown);
-}
-async function countdown(){
-  const fl = $('flash');
-  for(const w of ['3','2','1']){
-    fl.className = 'flash count'; fl.innerHTML = '<div class="word">'+w+'</div>'; fl.hidden = false; sfx('count');
-    await wait(800);
-  }
-  fl.className = 'flash moment'; fl.innerHTML = '<div class="word">¡AHORA!</div>'; sfx('go');
-  await wait(1500);
-  fl.hidden = true;
-  phase = 'cry-pick'; screenAt = performance.now();
-  setNote(
-    '<div class="eyebrow"><span>Primer punto en juego</span></div>' +
-    '<p class="ask">¿Qué lado gritó más fuerte?</p>' +
-    '<div class="picks">' +
-      '<button class="pick L" id="pk0" type="button"><span class="k">1</span><span class="t">← '+nm(0)+'</span></button>' +
-      '<button class="pick R" id="pk1" type="button"><span class="k">2</span><span class="t">'+nm(1)+' →</span></button>' +
-      '<button class="pick N" id="pk2" type="button"><span class="k">3</span><span class="t">Empate: un punto para cada uno</span></button>' +
-    '</div>');
-  const f = act(k => cryWin(k), true);
-  [0,1,2].forEach(k => { $('pk'+k).onclick = () => f(k); });
-  cry.pick = f;
-}
-async function cryWin(k){
-  phase = 'cry-done'; state.cry = true;
-  document.querySelectorAll('.pick').forEach(b => b.disabled = true);
-  sfx('ding');
-  if(k===2){ award(0,1); award(1,1); } else award(k,1);
-  await wait(1500);
-  rules();
+  bindNext('ready', rules);
 }
 
 /* --- reglas en una sola pantalla --- */
@@ -1751,7 +1698,6 @@ document.addEventListener('keydown', e => {
   if(['1','2','3'].includes(k)){
     e.preventDefault();
     if(phase==='answer') choose(+k-1);
-    else if(phase==='cry-pick' && cry.pick) cry.pick(+k-1);
     return;
   }
   if(k==='Enter' || k==='ArrowRight'){

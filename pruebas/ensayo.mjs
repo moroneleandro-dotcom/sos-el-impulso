@@ -177,9 +177,7 @@ async function setup(H, {cry=2, names=null}={}){
   }
   await H.waitPhase('lineup'); await H.shot('asi-quedan');
   await H.enter();
-  await H.waitPhase('cry'); await H.shot('grito');
-  await H.enter(); await H.waitPhase('cry-pick', 15000); await H.shot('grito-quien');
-  await H.key(String(cry+1)); await H.waitPhase('rules', 10000); await H.shot('reglas');
+  await H.waitPhase('rules', 10000); await H.shot('reglas');
   await H.enter(); await H.waitPhase('read');
 }
 // plan de una parada: 'ok' | 'steal' | 'none' | 'tt' (mecha vencida dos veces) | 'ts' (vence y roban bien) | 'wt' (falla y vence)
@@ -287,10 +285,9 @@ const SCENARIOS = [
     await p.keyboard.press('Control+A'); await p.keyboard.type('Mamá Hurra Pura'); await H.shot('nombre-con-letras-de-comando');
     if(await H.phase()!=='teams') throw new Error('escribir un nombre disparó un comando');
     await H.enter(); await H.waitSel('#in1', 10000); await H.enter(); await H.waitPhase('lineup'); await H.enter();
-    await H.waitPhase('cry'); await H.sleep(500); await p.dblclick('#count'); await H.waitPhase('cry-pick', 15000);
-    await p.keyboard.press('7'); await p.keyboard.press('2'); await p.keyboard.press('1'); // tecla de más: solo vale la primera
     await H.waitPhase('rules', 10000);
-    const s0 = await H.st(); if(s0.score.join()!=='0,1') throw new Error('el grito sumó mal: '+s0.score);
+    await p.keyboard.press('7'); // tecla que no hace nada
+    const s0 = await H.st(); if(s0.score.join()!=='0,0') throw new Error('el partido no arrancó 0 a 0: '+s0.score);
     // ayuda
     await H.key('h'); await H.shot('ayuda'); await H.key('Escape');
     await H.enter(); await H.waitPhase('read');
@@ -308,7 +305,7 @@ const SCENARIOS = [
     // Retroceso: repetir la parada
     await H.key('Backspace'); await H.shot('repetir-pregunta'); await H.key('Enter');
     await H.waitPhase('read'); await H.sleep(500);
-    const s1 = await H.st(); if(s1.score.join()!=='0,1' || s1.stealing) throw new Error('repetir parada no volvió atrás: '+s1.score);
+    const s1 = await H.st(); if(s1.score.join()!=='0,0' || s1.stealing) throw new Error('repetir parada no volvió atrás: '+s1.score);
     await H.enter(); await H.waitPhase('answer'); await H.key(String(CORRECT[0]+1)); await H.untilDone();
     await H.sleep(400);
     // doble clic en Seguir: avanza una sola parada
@@ -354,7 +351,6 @@ SCENARIOS.push({name:'tactil', desc:'Todo con toques, sin teclado', run: async H
   await H.shot('portada');
   await tap('#start'); await H.waitPhase('teams'); await tap('.chip[data-s="1"]', 300); await tap('#ready', 800);
   await H.waitSel('#in1', 10000); await tap('#ready', 800); await H.waitPhase('lineup'); await tap('#ready', 800);
-  await H.waitPhase('cry'); await tap('#count'); await H.waitPhase('cry-pick', 15000); await H.sleep(600); await tap('#pk0', 300);
   await H.waitPhase('rules', 10000); await H.shot('reglas'); await tap('#play');
   for(let i=0;i<6;i++){
     await H.waitPhase('read'); await p.waitForSelector('#flash', {state:'hidden', timeout:15000}); await H.sleep(450);
@@ -398,7 +394,6 @@ async function timing(browser, base){
     await H.sleep(5000); // presentan la portada
     await H.enter(); await H.waitPhase('teams'); await H.sleep(30000); // la sala elige nombres y Cerebros
     await H.enter(); await H.waitSel('#in1', 10000); await H.sleep(15000); await H.enter(); await H.waitPhase('lineup'); await H.sleep(8000); await H.enter(); mark('equipos');
-    await H.waitPhase('cry'); await H.sleep(6000); await H.enter(); await H.waitPhase('cry-pick', 15000); await H.sleep(3000); await H.key('1'); mark('grito');
     await H.waitPhase('rules', 10000); await H.sleep(15000); await H.enter(); mark('reglas');
     const plans = ['ok','steal','ok','ok','steal','ok'];
     for(let i=0;i<6;i++){ await station(H, i, plans[i], {shoot:false, pauses:HUMAN}); mark('parada'+(i+1)); }
