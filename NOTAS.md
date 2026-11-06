@@ -19,3 +19,6 @@ Juego que un grupo de alumnos (Franco, Facundo, Valentino, Felipe y Mateo) muest
 Intro → elección de bandos (Simpáticos vs Parasimpáticos, gritos de guerra, primer punto) → 7 paradas en las que una "señal" viaja por un dibujo de palitos (pie → nervios → médula → tronco del encéfalo → cerebro → eferente → músculo; perro → simpático; calma → parasimpático) con mecha de 20 s, suspenso, robo de punto y la última parada dorada que vale doble → duelo final de capitanas (teclas A y L, con trampas) → campeones → diploma → cierre emotivo "Una última señal".
 
 Controles del que maneja: Enter avanza · 1, 2, 3 eligen · P pausa la mecha · en el duelo A y L.
+
+## Plan de trabajo ampliado
+Antes de seguir, leé y cumplí `PLAN-NOCHE.md`: define qué es una presentación espectacular, cómo ensayarla y cuándo se puede dar por terminada.
