@@ -174,7 +174,7 @@ body.paused *, body.paused *::before, body.paused *::after{animation-play-state:
 .opt:disabled{cursor:default}
 .opt.dim{opacity:.45}
 .answered .opt{font-size:1.08em;padding-top:.25em;padding-bottom:.25em}
-@media (max-aspect-ratio:3/2){.ribbon .em{display:none}.ribbon .nm{font-size:2.35em}}
+@media (max-aspect-ratio:3/2){.ribbon .em{display:none}.ribbon .nm{font-size:2.5em}}
 
 .fb{font-size:1.06em;line-height:1.32;display:flex;flex-direction:column;gap:.3em}
 .fb:empty{display:none}
@@ -708,7 +708,8 @@ const KEY = 'sos-el-impulso-v2';
 function load(){ try{ return JSON.parse(localStorage.getItem(KEY)) || {}; }catch(e){ return {}; } }
 function store(o){ try{ localStorage.setItem(KEY, JSON.stringify(Object.assign(load(), o))); }catch(e){} }
 const saved = load();
-let names = Array.isArray(saved.names) && saved.names.length===2 ? saved.names.map(n => String(n).slice(0,24)) : [TEAMS[0].sugg[0], TEAMS[1].sugg[0]];
+const savedOk = saved.prog && saved.prog.at && Date.now()-saved.prog.at < 20*60*1000;
+let names = savedOk && Array.isArray(saved.names) && saved.names.length===2 ? saved.names.map(n => String(n).slice(0,24)) : [TEAMS[0].sugg[0], TEAMS[1].sugg[0]];
 let sugIdx = [0,0];
 function saveProgress(stage){
   if(ENSAYO) return;
@@ -1027,7 +1028,7 @@ function pointsLeft(){
 function swing(team, before){
   const o = 1-team, b = before[team]-before[o], a = state.score[team]-state.score[o];
   if(b < 0 && a > 0) return '¡Lo dieron vuelta!';
-  if(b < 0 && a === 0) return '¡Lo empataron!';
+  if(b < 0 && a === 0) return '¡Lo alcanzaron!';
   if(b < 0) return '¡Se acercan!';
   return '';
 }
@@ -1116,6 +1117,7 @@ function resume(p){
 function teams(){
   screen('teams'); audio(); redraw(true); sfx('horn'); band(); music('intro');
   state = fresh(); clearProgress(); $('burns').innerHTML = '';
+  sugIdx = [0,0]; names = [TEAMS[0].sugg[0], TEAMS[1].sugg[0]];
   $('board').hidden = false; drawScore();
   const side = t => '<div class="side '+TEAMS[t].s+'"><div class="head">'+EMB[t]+'<div><div class="big">'+(t===0?'← ':'')+TEAMS[t].side+(t===1?' →':'')+'</div><div class="where">este lado de la sala</div></div></div>' +
     '<label for="in'+t+'">Nombre del equipo</label><input id="in'+t+'" maxlength="24" autocomplete="off" spellcheck="false" value="'+nm(t)+'">' +
@@ -1128,7 +1130,7 @@ function teams(){
     '<div class="row"><span class="hint">Escribí o dejá el sugerido · ↓ otro nombre</span><button class="go" id="ready" type="button">Listos <kbd>Enter</kbd></button></div>');
   [0,1].forEach(t => {
     const inp = $('in'+t);
-    inp.addEventListener('input', () => { names[t] = inp.value.slice(0,24); store({names: names.map((n,k)=>n.trim()||TEAMS[k].sugg[0])}); drawScore(); });
+    inp.addEventListener('input', () => { names[t] = inp.value.slice(0,24); drawScore(); });
     inp.addEventListener('focus', () => inp.select());
     $('ot'+t).onclick = () => otherName(t);
   });
@@ -1139,12 +1141,12 @@ function otherName(t){
   sugIdx[t] = (sugIdx[t]+1) % TEAMS[t].sugg.length;
   let s = TEAMS[t].sugg[sugIdx[t]]; if(s===names[t]){ sugIdx[t] = (sugIdx[t]+1) % TEAMS[t].sugg.length; s = TEAMS[t].sugg[sugIdx[t]]; }
   names[t] = s; const inp = $('in'+t); if(inp){ inp.value = s; inp.select(); }
-  store({names}); drawScore(); sfx('pop');
+  drawScore(); sfx('pop');
 }
 function commitNames(){
   names = names.map((n,k) => (n||'').replace(/\s+/g,' ').trim().slice(0,24) || TEAMS[k].sugg[0]);
   if(names[0].toLowerCase()===names[1].toLowerCase()) names[1] = TEAMS[1].sugg[0]===names[0] ? TEAMS[1].sugg[1] : TEAMS[1].sugg[0];
-  store({names}); if(document.activeElement) document.activeElement.blur();
+  if(document.activeElement) document.activeElement.blur();
   cry();
 }
 
@@ -1239,7 +1241,7 @@ function goTo(i){
 }
 async function goldIntro(s){
   const fl = $('flash');
-  fl.className = 'flash goldf'; fl.innerHTML = '<p>★ Parada dorada ★</p><div class="word">¡VALE DOBLE!</div><p class="who">para '+nm(state.turn)+'</p>'; fl.hidden = false;
+  fl.className = 'flash goldf'; fl.innerHTML = '<p>★ Parada dorada ★</p><div class="word">¡VALE DOBLE!</div><p class="who">para <span style="color:'+TEAMS[state.turn].c+'">'+nm(state.turn)+'</span></p>'; fl.hidden = false;
   sfx('gold'); later(()=>sfx('gold'), 450);
   await wait(2200);
   fl.hidden = true; screenAt = performance.now();
