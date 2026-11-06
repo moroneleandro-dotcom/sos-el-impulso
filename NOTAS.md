@@ -4,7 +4,9 @@ Juego que un grupo de alumnos (Franco, Facundo, Valentino, Felipe y Mateo) muest
 
 ## Cómo está hecho
 - `index.html`: todo el juego (HTML + CSS + JS, sin librerías). Se publica tal cual con GitHub Pages desde la rama `main`.
-- `fonts/`: las letras en .woff2 (sin depender de internet, por si el wifi de la escuela es malo). Kalam (SIL Open Font License), Permanent Marker y Homemade Apple (Apache 2.0), de Google Fonts.
+- `fonts/`: las letras en .woff2 (sin depender de internet, por si el wifi de la escuela es malo), bajadas de Google Fonts:
+  - **Atkinson Hyperlegible** (400 y 700), del Braille Institute, para todo el texto de lectura: está diseñada para distinguir bien cada letra de lejos. Licencia **SIL Open Font License 1.1** (uso libre, también en proyectos públicos).
+  - Permanent Marker (títulos a mano) y Homemade Apple (firmas): Apache 2.0. Kalam (rótulos del dibujo): SIL Open Font License.
 - `CONTENIDO.md`: texto exacto de la presentación. **El juego no puede usar contenido que no esté ahí.**
 - Los sonidos se sintetizan con Web Audio (no hay archivos de audio).
 

@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guía del que maneja · Sos el Impulso</title>
+<style>
+@font-face{font-family:'Atkinson Hyperlegible';font-weight:400;src:url(fonts/AtkinsonHyperlegible-400.woff2) format('woff2')}
+@font-face{font-family:'Atkinson Hyperlegible';font-weight:700;src:url(fonts/AtkinsonHyperlegible-700.woff2) format('woff2')}
+@font-face{font-family:'Permanent Marker';src:url(fonts/PermanentMarker-400.woff2) format('woff2')}
+@page{size:A4;margin:11mm}
+:root{--pencil:#2b2f37;--red:#c62828;--blue:#1d3f9e;--hl:#fff176;--soft:#4e5562}
+*{box-sizing:border-box}
+body{margin:0;background:#fff;color:var(--pencil);font:400 10.6pt/1.32 'Atkinson Hyperlegible',Verdana,Arial,sans-serif}
+.page{max-width:190mm;margin:0 auto;padding:8mm 0}
+h1{font-family:'Permanent Marker',cursive;font-weight:400;font-size:22pt;margin:0;line-height:1.1}
+h1 b{color:var(--red);font-weight:400}
+h2{font-family:'Permanent Marker',cursive;font-weight:400;font-size:13pt;margin:9px 0 4px;border-bottom:2px dashed #c9d6e3;padding-bottom:2px}
+.sub{margin:2px 0 6px;color:var(--soft)}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:6mm}
+kbd{font:700 9.5pt 'Atkinson Hyperlegible',sans-serif;border:1.6px solid var(--pencil);border-bottom-width:3px;border-radius:5px;padding:0 5px;white-space:nowrap;background:#fff}
+table{width:100%;border-collapse:collapse}
+td{padding:2.5px 4px;vertical-align:top;border-bottom:1px solid #e3e8ee}
+td:first-child{white-space:nowrap;width:1%}
+.big kbd{font-size:12pt}
+.say{font-style:italic}
+ol{margin:0;padding-left:18px}
+ol li{margin:2px 0}
+.box{border:2px solid var(--pencil);border-radius:8px 14px 6px 12px;padding:5px 8px;margin-top:6px}
+.hl{background:var(--hl);padding:0 3px}
+.red{color:var(--red);font-weight:700}.blue{color:var(--blue);font-weight:700}
+.check li{list-style:none;margin-left:-16px}
+.check li::before{content:"☐ ";font-size:11pt}
+.print{float:right;font:700 10pt 'Atkinson Hyperlegible',sans-serif;border:2px solid var(--pencil);background:var(--hl);border-radius:8px;padding:3px 10px;cursor:pointer}
+@media print{.print{display:none}.page{padding:0}}
+@media (max-width:640px){.cols{grid-template-columns:1fr}.page{padding:12px}}
+</style>
+</head>
+<body>
+<div class="page">
+  <button class="print" onclick="window.print()">Imprimir</button>
+  <h1>Sos el <b>Impulso</b> · guía del que maneja</h1>
+  <p class="sub">Una hoja para tener al lado de la compu. El juego dura <b>unos 6 minutos</b>. Con <b>Enter</b> se hace casi todo.</p>
+
+  <div class="cols">
+    <div>
+      <h2>Las teclas</h2>
+      <table>
+        <tr class="big"><td><kbd>Enter</kbd></td><td><b>Seguir.</b> También prende la mecha. Si no sabés qué apretar: Enter.</td></tr>
+        <tr class="big"><td><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd></td><td>La respuesta que <b>dijo en voz alta el Cerebro</b> del equipo.</td></tr>
+        <tr><td><kbd>Espacio</kbd></td><td>Pausa general (para todo). Otra vez Espacio: sigue.</td></tr>
+        <tr><td><kbd>U</kbd></td><td>Deshacer el último punto.</td></tr>
+        <tr><td><kbd>Retroceso</kbd></td><td>Repetir la parada (si apretaste mal). Pregunta antes.</td></tr>
+        <tr><td><kbd>A</kbd> · <kbd>L</kbd></td><td>Duelo: <span class="red">A = Simpáticos</span>, <span class="blue">L = Parasimpáticos</span>. Lo aprietan los Cerebros.</td></tr>
+        <tr><td><kbd>M</kbd> <kbd>+</kbd> <kbd>−</kbd></td><td>Música sí/no y volumen. <kbd>S</kbd>: efectos sí/no.</td></tr>
+        <tr><td><kbd>F</kbd></td><td>Pantalla completa.</td></tr>
+        <tr><td><kbd>H</kbd></td><td>Ayuda en pantalla con todas las teclas.</td></tr>
+        <tr><td><kbd>R</kbd></td><td>Reiniciar (pregunta antes; <kbd>Esc</kbd> = no).</td></tr>
+        <tr><td><kbd>E</kbd></td><td>En la portada: <b>modo ensayo</b> (todo más rápido, no guarda).</td></tr>
+      </table>
+
+      <h2>Antes de presentar</h2>
+      <ol class="check">
+        <li>Abrir el link de Canva (página 8) y probar que cargue.</li>
+        <li>Enchufar el sonido y subir el volumen de la compu. Tocar una tecla en la portada: arranca la música.</li>
+        <li>Apretar <kbd>F</kbd> para pantalla completa.</li>
+        <li>Ensayar una vez con <kbd>E</kbd> (modo ensayo) y después <kbd>R</kbd> para volver a la portada.</li>
+        <li>Mirar desde el fondo de la sala que se lean los nombres.</li>
+      </ol>
+
+      <h2>Si algo sale mal</h2>
+      <div class="box">
+        <b>Apreté mal una respuesta:</b> <kbd>Retroceso</kbd> y Enter (se repite la parada).<br>
+        <b>Sumé un punto de más:</b> <kbd>U</kbd>.<br>
+        <b>Hay que hablar o calmar la sala:</b> <kbd>Espacio</kbd>.<br>
+        <b>Se cerró o se recargó la página:</b> volver a abrirla y Enter en "Seguir la partida".<br>
+        <b>No hay sonido:</b> tocar una tecla o hacer clic; si sigue, <kbd>M</kbd>. El juego anda igual sin sonido.<br>
+        <b>Nadie apretó en el duelo:</b> Enter, se repite.
+      </div>
+    </div>
+
+    <div>
+      <h2>Qué decir en cada momento</h2>
+      <table>
+        <tr><td><b>Portada</b></td><td class="say">"Esto es Sos el Impulso: ustedes son la señal nerviosa."</td></tr>
+        <tr><td><b>Equipos</b></td><td class="say">"Este lado, Simpáticos; este lado, Parasimpáticos. Elijan nombre y su Cerebro: el que dice la respuesta."</td></tr>
+        <tr><td></td><td>Escribí el nombre (o <kbd>↓</kbd> para otro sugerido). Enter, Enter.</td></tr>
+        <tr><td><b>Grito</b></td><td class="say">"A la cuenta de 3, cada lado grita su grito."</td></tr>
+        <tr><td></td><td>Enter (cuenta 3, 2, 1). Después <kbd>1</kbd>, <kbd>2</kbd> o <kbd>3</kbd> (empate).</td></tr>
+        <tr><td><b>Reglas</b></td><td class="say">"Responde el equipo marcado. 15 segundos. Si fallan, roba el otro. Las dos últimas valen doble."</td></tr>
+        <tr><td><b>Cada parada</b></td><td>1) Lee el que dice "Lee:". 2) Enter: mecha. 3) <span class="hl">Esperá que el Cerebro diga la respuesta</span> y apretá su número. 4) Leé en voz alta la explicación. 5) Enter.</td></tr>
+        <tr><td><b>Parada 5</b></td><td class="say">"¡GUAU!" (ladren). Al final aparece "¡TODOS DE PIE!": invitá a pararse.</td></tr>
+        <tr><td><b>Parada 6</b></td><td class="say">"Ya se pueden sentar. Respiren con la pelotita."</td></tr>
+        <tr><td><b>Duelo</b></td><td class="say">"Los dos Cerebros, al teclado: A a la izquierda, L a la derecha. Cuando aparezca el rayo… ¡ojo con las trampas!"</td></tr>
+        <tr><td></td><td>Vos apretás Enter y te corrés.</td></tr>
+        <tr><td><b>Campeones</b></td><td class="say">"¡Un aplauso para los dos equipos!"</td></tr>
+        <tr><td><b>Diploma</b></td><td class="say">"Esto es lo que recorrieron hoy. ¡Sáquenle una foto!"</td></tr>
+        <tr><td><b>Cierre</b></td><td>Leen las frases. Al final, los cinco juntos: <span class="say">"¡Gracias por jugar!"</span></td></tr>
+      </table>
+
+      <h2>Cuánto dura</h2>
+      <table>
+        <tr><td>Portada, equipos, grito y reglas</td><td>≈ 1 min 30 s</td></tr>
+        <tr><td>6 paradas (≈ 35 s cada una)</td><td>≈ 3 min 30 s</td></tr>
+        <tr><td>Duelo, campeones, diploma y cierre</td><td>≈ 1 min 30 s</td></tr>
+        <tr><td><b>Total</b></td><td><b>≈ 6 a 7 minutos</b></td></tr>
+      </table>
+      <p class="sub" style="margin-top:6px">Consejo: si la sala está muy entusiasmada, no apures. Si se alarga, leé más corto las explicaciones.</p>
+    </div>
+  </div>
+</div>
+</body>
+</html>
