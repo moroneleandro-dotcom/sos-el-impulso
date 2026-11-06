@@ -8,7 +8,7 @@ Regla: si algo no tiene respaldo, se saca. Resultado de esta auditoría: **todo 
 
 | # | Texto en el juego | Respaldo en `CONTENIDO.md` |
 |---|---|---|
-| 1 | Escena: "Te metés a la pileta y el agua está helada. Ustedes son la señal que sale del pie." | **juego** |
+| 1 | Escena: "Se meten a la pileta y el agua está helada. Ustedes son la señal que sale del pie." | **juego** |
 | 1 | Pregunta: "¿Por qué vía viajan hacia el sistema central?" | P4: "Existen dos vías de nervios: la aferente, la cual conduce la señal al sistema central para procesarla, y la eferente…" |
 | 1 | ✔ "Vía aferente" — "La aferente conduce la señal hacia el sistema central para procesarla." | P4: "la aferente, la cual conduce la señal al sistema central para procesarla" |
 | 1 | ✘ "Vía eferente" — "La eferente va al revés: hacia los órganos efectores." | P4: "la eferente, la cual conduce la señal hacia los órganos efectores" |
@@ -52,7 +52,7 @@ Regla: si algo no tiene respaldo, se saca. Resultado de esta auditoría: **todo 
 | Texto | Respaldo |
 |---|---|
 | Cadena del duelo: "los ojos ven el rayo → nervios, vía aferente → el cerebro interpreta → vía eferente → el somático mueve el dedo" | P7 (ojos, nervios, cerebro que interpreta); P4 (vías); P5 (somático, movimiento voluntario) |
-| Diploma 1: "En el central se analiza la información. Por los nervios del periférico, viaja." | P2: "donde se analiza e interpreta la información"; P4: nervios, "las vías por donde la información viaja" |
+| Diploma 1: "En el central se analiza la información; viaja por los nervios del periférico." | P2: "donde se analiza e interpreta la información"; P4: nervios, "las vías por donde la información viaja" |
 | Diploma 2: "Aferente: hacia el sistema central. Eferente: hacia los órganos efectores." | P4 |
 | Diploma 3: "Somático: lo que movemos a voluntad. Autónomo: lo automático, como respirar." | P4 ("se encarga de las automáticas"); P5 |
 | Diploma 4: "Simpático: ataque o huida. Parasimpático: el cuerpo en reposo." | P6 |

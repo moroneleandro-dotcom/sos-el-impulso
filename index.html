@@ -569,7 +569,7 @@ const secs = () => ENSAYO ? {turno:6, robo:4} : {turno:15, robo:10};
 const STATIONS = [
   {
     place:'Pie', node:[228,425],
-    scene:'Te metés a la pileta y el agua está <span class="hl">helada</span>. Ustedes son la señal que sale del pie.',
+    scene:'Se meten a la pileta y el agua está <span class="hl">helada</span>. Ustedes son la señal que sale del pie.',
     ask:'¿Por qué vía viajan hacia el sistema central?',
     opts:[
       {t:'Vía eferente', ok:false, msg:'La eferente va al revés: hacia los órganos efectores.'},
@@ -1418,7 +1418,7 @@ async function duelEnd(winner, early, t, culprit){
   let head, body;
   if(early){
     sfx('bzzt'); veil('red'); shake(); state.shorts++; burn();
-    head = '¡'+nm(culprit)+' se adelantó!';
+    head = '¡Se adelantó el Cerebro de '+nm(culprit)+'!';
     body = (st==='decoy' ? 'Apretó con una trampa.' : 'Apretó antes del rayo.')+' El duelo es para <b style="color:'+TEAMS[winner].c+'">'+nm(winner)+'</b>.';
   } else {
     state.react = t;
@@ -1483,7 +1483,7 @@ async function diploma(){
   screen('diploma'); sfx('stamp'); music('fest');
   const [a,b] = state.score, w = a>b?0:1;
   const IDEAS = [
-    {c:'c1', h:'Central y periférico', t:'En el central se analiza la información. Por los nervios del periférico, viaja.', m:'el viaje por la columna'},
+    {c:'c1', h:'Central y periférico', t:'En el central se analiza la información; viaja por los nervios del periférico.', m:'el viaje por la columna'},
     {c:'c2', h:'Aferente y eferente', t:'Aferente: hacia el sistema central. Eferente: hacia los órganos efectores.', m:'¡el agua helada!'},
     {c:'c3', h:'Somático y autónomo', t:'Somático: lo que movemos a voluntad. Autónomo: lo automático, como respirar.', m:'sacar el pie'},
     {c:'c4', h:'Simpático y parasimpático', t:'Simpático: ataque o huida. Parasimpático: el cuerpo en reposo.', m:'el perro y Toby'}
