@@ -17,10 +17,22 @@ Juego que un grupo de alumnos (Franco, Facundo, Valentino, Felipe y Mateo) muest
 4. Simple y claro para una presentación escolar corta (5–7 minutos), pero que emocione: ganas de competir, participar y ganar.
 5. La dirección pública no cambia: https://moroneleandro-dotcom.github.io/sos-el-impulso/ (está linkeada desde Canva).
 
-## Estructura actual del juego
-Intro → elección de bandos (Simpáticos vs Parasimpáticos, gritos de guerra, primer punto) → 7 paradas en las que una "señal" viaja por un dibujo de palitos (pie → nervios → médula → tronco del encéfalo → cerebro → eferente → músculo; perro → simpático; calma → parasimpático) con mecha de 20 s, suspenso, robo de punto y la última parada dorada que vale doble → duelo final de capitanas (teclas A y L, con trampas) → campeones → diploma → cierre emotivo "Una última señal".
+## Estructura actual del juego (versión 2)
+Portada → **equipos** (cada lado elige su nombre: hay sugeridos sacados de la presentación, se escriben en el campo o se cambian con ↓; cada equipo elige su **Cerebro**, el que dice la respuesta) → **grito de guerra** (cuenta 3-2-1, primer punto; empate = un punto para cada uno) → **reglas** en una pantalla → **6 paradas, 3 para cada equipo** (arrancan los Parasimpáticos; las dos últimas son **doradas** y valen doble, una para cada equipo, anunciadas con un cartel) con mecha de 15 s, redoble, robo de punto (10 s) y el relator que dice cuántos puntos quedan → **duelo de Cerebros** (A y L, con trampas; vale 2; si hay empate, desempate que vale 1) → **campeones** con aplauso para los dos equipos → **diploma** con las 4 ideas de la presentación (para la foto) → **una última señal** con las firmas.
 
-Controles del que maneja: Enter avanza · 1, 2, 3 eligen · P pausa la mecha · en el duelo A y L.
+Cada equipo tiene color, patrón (rayas rojas / lunares azules, para que también lo distingan las personas daltónicas), emblema (rayo / luna) y flecha hacia su lado de la sala.
+
+Música original sintetizada con 4 climas: tranquila (portada, equipos, lectura), tensa (mecha y duelo), festiva (campeones y diploma) y emotiva (cierre). Baja sola durante el suspenso.
+
+## Controles del que maneja
+Enter seguir (y prender la mecha) · 1 2 3 respuesta · Espacio pausa general · U deshacer el último punto · Retroceso repetir la parada · A y L en el duelo · M música (y + − volumen) · S efectos · F pantalla completa · H ayuda · R reiniciar (pregunta antes) · E en la portada: modo ensayo.
+Si se recarga la página en medio de la partida, la portada ofrece "Seguir la partida" (dura 20 minutos).
+Guía imprimible de una hoja: `guia.html`.
+
+## Carpetas nuevas
+- `investigacion/`: resúmenes con fuentes (atención, juegos y TV, motivación) y la síntesis que guió el diseño.
+- `ensayo/`: guion de la presentación, rúbrica, público imaginario, auditoría de contenido y las rondas de evaluación.
+- `pruebas/ensayo.mjs`: ensayo automatizado (8 escenarios × 7 resoluciones, con video). `node pruebas/ensayo.mjs` y después `node pruebas/resumen.mjs`.
 
 ## Plan de trabajo ampliado
 Antes de seguir, leé y cumplí `PLAN-NOCHE.md`: define qué es una presentación espectacular, cómo ensayarla y cuándo se puede dar por terminada.
